@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 class HomeController extends BaseController
 {
-    public function index(): void
+    public function index(): string
     {
-        echo '<h1>Hello</h1>';
+        return '<h1>Hello</h1>';
     }
 }

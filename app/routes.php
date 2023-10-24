@@ -7,4 +7,6 @@ return $registerRoutes = function (Router $router) {
     $router->get('/', [HomeController::class, 'index']);
 
     $router->get('/articles', fn () => print 'article');
+
+    $router->get('/error', fn () => throw new Exception('Error'));
 };

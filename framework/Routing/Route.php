@@ -2,6 +2,10 @@
 
 namespace Framework\Routing;
 
+use Framework\Exceptions\ServerError;
+use Framework\Requests\Response;
+use Framework\Requests\ResponseInterface;
+
 class Route
 {
     protected string $path;
@@ -63,14 +67,31 @@ class Route
         return new Route($path, HttpVerb::DELETE, $action);
     }
 
-    public function run(): void
+    public function run(): ResponseInterface
     {
+        $res = null;
         if (\is_array($this->action)) {
             [$controllerName, $methodName] = $this->action;
-            (new $controllerName())->{$methodName}();
+
+            $res = (new $controllerName())->{$methodName}();
         } else {
-            ($this->action)();
+            $res = ($this->action)();
         }
+
+        if ($res instanceof ResponseInterface) {
+            return $res;
+        }
+        if (\is_string($res)) {
+            return new Response($res);
+        }
+
+        $json = json_encode($res, JSON_PRETTY_PRINT);
+
+        if (false !== $json) {
+            return new Response($json, 200, ['Content-Type' => 'application/json']);
+        }
+
+        throw new ServerError('Unable to encode response');
     }
 
     public function path(): string

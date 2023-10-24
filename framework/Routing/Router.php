@@ -2,6 +2,11 @@
 
 namespace Framework\Routing;
 
+use Framework\Exceptions\NotFoundException;
+use Framework\Exceptions\ServerError;
+use Framework\Requests\Response;
+use Framework\Requests\ResponseInterface;
+
 class Router
 {
     /**
@@ -60,23 +65,25 @@ class Router
     /**
      * Dispatch a request url to the right handler.
      */
-    public function dispatch(): void
+    public function dispatch(): ResponseInterface
     {
-        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? HttpVerb::GET;
+        $requestMethod = HttpVerb::tryFrom($_SERVER['REQUEST_METHOD']) ?? HttpVerb::GET;
         $requestPath = $_SERVER['REQUEST_URI'] ?? '/';
 
         $matching = $this->match($requestMethod, $requestPath);
         if ($matching) {
             // if an error occurs, show it to the user
             try {
-                $matching->run();
+                $response = $matching->run();
             } catch (\Throwable $th) {
-                $this->dispatchError($th);
+                $response = $this->dispatchError($th);
             }
         } else {
             // no matching route has been found
-            $this->dispatchNotFound();
+            $response = $this->dispatchNotFound();
         }
+
+        return $response;
     }
 
     public function redirect(string $path): void
@@ -117,18 +124,16 @@ class Router
      * Dispatch a Server Error (code 500)
      * and show related error message.
      */
-    private function dispatchError(\Throwable $th): void
+    private function dispatchError(\Throwable $th): ResponseInterface
     {
-        \http_response_code(500);
-        echo 'Server Error: '.$th->getMessage();
+        return Response::fromException(new ServerError($th->getMessage(), 500, $th));
     }
 
     /**
      * Dispatch a Not Found Error (code 404).
      */
-    private function dispatchNotFound(): void
+    private function dispatchNotFound(): ResponseInterface
     {
-        \http_response_code(404);
-        echo '404 Error: Not found';
+        return Response::fromException(new NotFoundException(), 404);
     }
 }

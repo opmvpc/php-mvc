@@ -2,11 +2,12 @@
 
 namespace App;
 
+use Framework\Framework;
 use Framework\Routing\Router;
 
-class App
+class App extends Framework
 {
-    public static function run(): void
+    public function run(): void
     {
         $router = new Router();
 
@@ -14,6 +15,7 @@ class App
         $registerRoutes = require_once __DIR__.'/routes.php';
         $registerRoutes($router);
 
-        $router->dispatch();
+        $response = $router->dispatch();
+        $response->send();
     }
 }

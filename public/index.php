@@ -1,7 +1,8 @@
 <?php
 
-use App\App;
-
 require __DIR__.'/../vendor/autoload.php';
 
-App::run();
+use App\App;
+
+$app = App::get();
+$app->run();
