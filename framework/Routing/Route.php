@@ -9,12 +9,12 @@ class Route
     protected HttpVerb $method;
 
     /**
-     * @var array<class-string, callable-string>|callable
+     * @var callable|list{0: class-string, 1: callable-string}
      */
     protected mixed $action;
 
     /**
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     private function __construct(string $path, HttpVerb $method, array|callable $action)
     {
@@ -26,7 +26,7 @@ class Route
     /**
      * Register a new GET route with the router.
      *
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     public static function get(string $path, array|callable $action): self
     {
@@ -36,7 +36,7 @@ class Route
     /**
      * Register a new POST route with the router.
      *
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     public static function post(string $path, array|callable $action): self
     {
@@ -46,7 +46,7 @@ class Route
     /**
      * Register a new PUT route with the router.
      *
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     public static function put(string $path, array|callable $action): self
     {
@@ -56,7 +56,7 @@ class Route
     /**
      * Register a new DELETE route with the router.
      *
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     public static function delete(string $path, array|callable $action): self
     {
@@ -79,7 +79,7 @@ class Route
     }
 
     /**
-     * @return array<class-string, callable-string>|callable
+     * @return callable|list{0: class-string, 1: callable-string} $action
      */
     public function action(): array|callable
     {

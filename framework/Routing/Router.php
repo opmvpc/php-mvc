@@ -20,11 +20,41 @@ class Router
     /**
      * Register a GET route.
      *
-     * @param array<class-string, callable-string>|callable $action
+     * @param callable|list{0: class-string, 1: callable-string} $action
      */
     public function get(string $path, mixed $action): void
     {
         $this->paths[$path] = Route::get($path, $action);
+    }
+
+    /**
+     * Register a POST route.
+     *
+     * @param callable|list{0: class-string, 1: callable-string} $action
+     */
+    public function post(string $path, mixed $action): void
+    {
+        $this->paths[$path] = Route::post($path, $action);
+    }
+
+    /**
+     * Register a PUT route.
+     *
+     * @param callable|list{0: class-string, 1: callable-string} $action
+     */
+    public function put(string $path, mixed $action): void
+    {
+        $this->paths[$path] = Route::put($path, $action);
+    }
+
+    /**
+     * Register a DELETE route.
+     *
+     * @param callable|list{0: class-string, 1: callable-string} $action
+     */
+    public function delete(string $path, mixed $action): void
+    {
+        $this->paths[$path] = Route::delete($path, $action);
     }
 
     /**
@@ -47,6 +77,21 @@ class Router
             // no matching route has been found
             $this->dispatchNotFound();
         }
+    }
+
+    public function redirect(string $path): void
+    {
+        \header('Location: '.$path, true, 301);
+
+        exit;
+    }
+
+    /**
+     * @return array<string, Route>
+     */
+    public function paths(): array
+    {
+        return $this->paths;
     }
 
     /**
