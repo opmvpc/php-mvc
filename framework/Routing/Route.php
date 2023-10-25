@@ -28,7 +28,17 @@ class Route
     }
 
     /**
-     * Register a new GET route with the router.
+     * Create a new route.
+     *
+     * @param callable|list{0: class-string, 1: callable-string} $action
+     */
+    public static function add(string $path, HttpVerb $method, array|callable $action): self
+    {
+        return new Route($path, $method, $action);
+    }
+
+    /**
+     * Create a new GET route.
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
@@ -38,7 +48,7 @@ class Route
     }
 
     /**
-     * Register a new POST route with the router.
+     * Create a new POST route.
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
@@ -48,7 +58,7 @@ class Route
     }
 
     /**
-     * Register a new PUT route with the router.
+     * Create a new PUT route.
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
@@ -58,7 +68,7 @@ class Route
     }
 
     /**
-     * Register a new DELETE route with the router.
+     * Create a new DELETE route.
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */

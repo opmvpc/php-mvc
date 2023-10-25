@@ -27,6 +27,16 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
+    public function add(string $path, HttpVerb $method, mixed $action): void
+    {
+        $this->paths[$path] = Route::add($path, $method, $action);
+    }
+
+    /**
+     * Register a GET route.
+     *
+     * @param callable|list{0: class-string, 1: callable-string} $action
+     */
     public function get(string $path, mixed $action): void
     {
         $this->paths[$path] = Route::get($path, $action);
@@ -65,10 +75,15 @@ class Router
     /**
      * Dispatch a request url to the right handler.
      */
-    public function dispatch(): ResponseInterface
+    public function dispatch(string $uri = '/', HttpVerb $method = HttpVerb::GET): ResponseInterface
     {
-        $requestMethod = HttpVerb::tryFrom($_SERVER['REQUEST_METHOD']) ?? HttpVerb::GET;
-        $requestPath = $_SERVER['REQUEST_URI'] ?? '/';
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            $requestMethod = HttpVerb::from($_SERVER['REQUEST_METHOD']);
+        } else {
+            $requestMethod = $method;
+        }
+
+        $requestPath = $_SERVER['REQUEST_URI'] ?? $uri;
 
         $matching = $this->match($requestMethod, $requestPath);
         if ($matching) {
