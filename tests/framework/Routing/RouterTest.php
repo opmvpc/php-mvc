@@ -17,20 +17,20 @@ describe('Router Tests', function () {
         $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
         $registerRoutes($this->router);
 
-        expect($this->router->paths()['/']->method())->toBe(HttpVerb::GET);
-        expect($this->router->paths()['/']->action())->toBeArray();
-        expect($this->router->paths()['/articles']->method())->toBe(HttpVerb::GET);
-        expect($this->router->paths()['/articles']->action())->toBeInstanceOf(Closure::class);
-        expect($this->router->paths()['/error']->method())->toBe(HttpVerb::GET);
-        expect($this->router->paths()['/error']->action())->toBeInstanceOf(Closure::class);
-        expect($this->router->paths()['/post']->method())->toBe(HttpVerb::POST);
-        expect($this->router->paths()['/post']->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()['/']->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()['/']->action())->toBeArray();
+        expect($this->router->routes()['/articles']->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()['/articles']->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()['/error']->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()['/error']->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()['/post']->method())->toBe(HttpVerb::POST);
+        expect($this->router->routes()['/post']->action())->toBeInstanceOf(Closure::class);
     });
 
     it('should register a POST route', function (string $uri, Closure $action) {
         $this->router->post($uri, $action);
-        expect($this->router->paths()[$uri]->method())->toBe(HttpVerb::POST);
-        expect($this->router->paths()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::POST);
+        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/post', fn () => 'post',
@@ -42,8 +42,8 @@ describe('Router Tests', function () {
 
     it('should register a PUT route', function (string $uri, Closure $action) {
         $this->router->put($uri, $action);
-        expect($this->router->paths()[$uri]->method())->toBe(HttpVerb::PUT);
-        expect($this->router->paths()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::PUT);
+        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/put', fn () => 'put',
@@ -55,8 +55,8 @@ describe('Router Tests', function () {
 
     it('should register a DELETE route', function (string $uri, Closure $action) {
         $this->router->delete($uri, $action);
-        expect($this->router->paths()[$uri]->method())->toBe(HttpVerb::DELETE);
-        expect($this->router->paths()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::DELETE);
+        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/delete', fn () => 'delete',
@@ -125,4 +125,121 @@ describe('Router Tests', function () {
         expect($response->getBody())->toContain('<h1>Hello</h1>');
         expect($response->getStatusCode())->toBe(200);
     });
+
+    it('should throw a not allowed exception when method is not allowed', function () {
+        $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
+        $registerRoutes($this->router);
+
+        $response = $this->router->dispatch('/articles', HttpVerb::POST);
+        expect($response->getBody())->toContain('Method Not Allowed');
+        expect($response->getStatusCode())->toBe(405);
+    });
+
+    it('should match a route with a parameter', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1');
+        expect($route->path())->toBe('/articles/{id}');
+        expect($route->params())->toBe(['id' => '1']);
+    })->with([
+        [
+            '/articles/{id}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should match a route with 2 parameters', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1/comments/2');
+        expect($route->path())->toBe('/articles/{articleId}/comments/{commentId}');
+        expect($route->params())->toBe(['articleId' => '1', 'commentId' => '2']);
+    })->with([
+        [
+            '/articles/{articleId}/comments/{commentId}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should match a route with an optional parameter', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1');
+        expect($route->path())->toBe('/articles/{id?}');
+        expect($route->params())->toBe(['id' => '1']);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles');
+        expect($route->path())->toBe('/articles/{id?}');
+        expect($route->params())->toBe(['id' => null]);
+    })->with([
+        [
+            '/articles/{id?}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should match a route with an optional and a required parameters', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1/comments');
+        expect($route->path())->toBe('/articles/{articleId}/comments/{commentId?}');
+        expect($route->params())->toBe(['articleId' => '1', 'commentId' => null]);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1/comments/2');
+        expect($route->path())->toBe('/articles/{articleId}/comments/{commentId?}');
+        expect($route->params())->toBe(['articleId' => '1', 'commentId' => '2']);
+    })->with([
+        [
+            '/articles/{articleId}/comments/{commentId?}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should match a route with 2 optional parameters', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1/comments');
+        expect($route->path())->toBe('/articles/{articleId}/comments/{commentId?}');
+        expect($route->params())->toBe(['articleId' => '1', 'commentId' => null]);
+
+        $route = $this->router->match(HttpVerb::GET, '/articles/1/comments/2');
+        expect($route->path())->toBe('/articles/{articleId}/comments/{commentId?}');
+        expect($route->params())->toBe(['articleId' => '1', 'commentId' => '2']);
+    })->with([
+        [
+            '/articles/{articleId}/comments/{commentId?}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should match a route with multiple parametres', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $route = $this->router->match(HttpVerb::GET, '/categories/1/articles/2/recommendations/3/comments/4');
+        expect($route->path())->toBe('/categories/{categoryId}/articles/{articleId}/recommendations/{recommendationId?}/comments/{commentId?}');
+        expect($route->params())->toBe(['categoryId' => '1', 'articleId' => '2', 'recommendationId' => '3', 'commentId' => '4']);
+
+        $route = $this->router->match(HttpVerb::GET, '/categories/1/articles/2/recommendations/3/comments');
+        expect($route->path())->toBe('/categories/{categoryId}/articles/{articleId}/recommendations/{recommendationId?}/comments/{commentId?}');
+        expect($route->params())->toBe(['categoryId' => '1', 'articleId' => '2', 'recommendationId' => '3', 'commentId' => null]);
+
+        $route = $this->router->match(HttpVerb::GET, '/categories/1/articles/2/recommendations/3/comments/');
+        expect($route->path())->toBe('/categories/{categoryId}/articles/{articleId}/recommendations/{recommendationId?}/comments/{commentId?}');
+        expect($route->params())->toBe(['categoryId' => '1', 'articleId' => '2', 'recommendationId' => '3', 'commentId' => null]);
+
+        $route = $this->router->match(HttpVerb::GET, '/categories/1/articles/2/recommendations/comments/');
+        expect($route->path())->toBe('/categories/{categoryId}/articles/{articleId}/recommendations/{recommendationId?}/comments/{commentId?}');
+        expect($route->params())->toBe(['categoryId' => '1', 'articleId' => '2', 'recommendationId' => null, 'commentId' => null]);
+    })->with([
+        [
+            '/categories/{categoryId}/articles/{articleId}/recommendations/{recommendationId?}/comments/{commentId?}', fn () => 'coucou',
+        ],
+    ]);
+
+    it('should throw an error if a required parameter is missing', function (string $uri, Closure $action) {
+        $this->router->get($uri, $action);
+
+        $response = $this->router->dispatch('/articles');
+        expect($response->getBody())->toContain('Missing route parameters: id');
+        expect($response->getStatusCode())->toBe(500);
+    })->with([
+        [
+            '/articles/{id}', fn () => 'coucou',
+        ],
+    ]);
 });

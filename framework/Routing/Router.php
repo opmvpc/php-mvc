@@ -2,6 +2,7 @@
 
 namespace Framework\Routing;
 
+use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\NotFoundException;
 use Framework\Exceptions\ServerError;
 use Framework\Requests\Response;
@@ -12,13 +13,13 @@ class Router
     /**
      * @var array<string, Route>
      */
-    protected array $paths;
+    protected array $routes;
 
     protected ?Route $current;
 
     public function __construct()
     {
-        $this->paths = [];
+        $this->routes = [];
         $this->current = null;
     }
 
@@ -29,7 +30,7 @@ class Router
      */
     public function add(string $path, HttpVerb $method, mixed $action): void
     {
-        $this->paths[$path] = Route::add($path, $method, $action);
+        $this->routes[$path] = Route::add($path, $method, $action);
     }
 
     /**
@@ -39,7 +40,7 @@ class Router
      */
     public function get(string $path, mixed $action): void
     {
-        $this->paths[$path] = Route::get($path, $action);
+        $this->routes[$path] = Route::get($path, $action);
     }
 
     /**
@@ -49,7 +50,7 @@ class Router
      */
     public function post(string $path, mixed $action): void
     {
-        $this->paths[$path] = Route::post($path, $action);
+        $this->routes[$path] = Route::post($path, $action);
     }
 
     /**
@@ -59,7 +60,7 @@ class Router
      */
     public function put(string $path, mixed $action): void
     {
-        $this->paths[$path] = Route::put($path, $action);
+        $this->routes[$path] = Route::put($path, $action);
     }
 
     /**
@@ -69,7 +70,7 @@ class Router
      */
     public function delete(string $path, mixed $action): void
     {
-        $this->paths[$path] = Route::delete($path, $action);
+        $this->routes[$path] = Route::delete($path, $action);
     }
 
     /**
@@ -85,20 +86,31 @@ class Router
 
         $requestPath = $_SERVER['REQUEST_URI'] ?? $uri;
 
-        $matching = $this->match($requestMethod, $requestPath);
+        try {
+            $matching = $this->match($requestMethod, $requestPath);
+        } catch (\Throwable $th) {
+            return $this->dispatchError($th);
+        }
+
         if ($matching) {
+            $this->current = $matching;
+
             // if an error occurs, show it to the user
             try {
                 $response = $matching->run();
             } catch (\Throwable $th) {
                 $response = $this->dispatchError($th);
             }
-        } else {
-            // no matching route has been found
-            $response = $this->dispatchNotFound();
+
+            return $response;
         }
 
-        return $response;
+        if (\in_array($requestPath, \array_keys($this->routes))) {
+            return $this->dispatchNotAllowed();
+        }
+
+        // no matching route has been found
+        return $this->dispatchNotFound();
     }
 
     public function redirect(string $path): void
@@ -111,28 +123,60 @@ class Router
     /**
      * @return array<string, Route>
      */
-    public function paths(): array
+    public function routes(): array
     {
-        return $this->paths;
+        return $this->routes;
     }
 
     /**
-     * Match an URL from registered routes
-     * Exact match implementation.
+     * Generate an URL from a route name.
+     *
+     * @param array<string, string> $params
      */
-    private function match(HttpVerb $requestMethod, string $requestPath): ?Route
+    public function route(string $name, array $params = []): string
     {
-        if (!\array_key_exists($requestPath, $this->paths)) {
-            return null;
+        foreach ($this->routes as $route) {
+            if ($route->name() === $name) {
+                $finds = [];
+                $replaces = [];
+
+                foreach ($params as $key => $value) {
+                    $finds[] = "{{$value}}";
+                    $replaces[] = $value;
+
+                    $finds[] = "{{$key}?}";
+                    $replaces[] = $value;
+                }
+
+                $path = str_replace($finds, $replaces, $route->path());
+
+                // remove optional params
+                $path = preg_replace('/\{([^}]+)\}\//', '', $path);
+
+                // throw an exception if there are still params
+                if (null === $path || str_contains($path, '{')) {
+                    throw new \Exception("Route {$name} has missing params");
+                }
+
+                return $path;
+            }
         }
 
-        $route = $this->paths[$requestPath];
+        throw new \Exception("Route {$name} not found");
+    }
 
-        if ($route->method() !== $requestMethod) {
-            throw new \Exception('Method not allowed');
+    /**
+     * Match an URL from registered routes.
+     */
+    public function match(HttpVerb $requestMethod, string $requestPath): ?Route
+    {
+        foreach ($this->routes as $route) {
+            if ($route->matches($requestMethod, $requestPath)) {
+                return $route;
+            }
         }
 
-        return $route;
+        return null;
     }
 
     /**
@@ -141,7 +185,15 @@ class Router
      */
     private function dispatchError(\Throwable $th): ResponseInterface
     {
-        return Response::fromException(new ServerError($th->getMessage(), 500, $th));
+        return Response::fromException(new ServerError($th->getMessage(), $th->getCode(), $th));
+    }
+
+    /**
+     * Dispatch a Not Allowed Error (code 405).
+     */
+    private function dispatchNotAllowed(): ResponseInterface
+    {
+        return Response::fromException(new MethodNotAllowedException(), 405);
     }
 
     /**
