@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP MVC Framework</title>
-    <?php echo $this->viteAssets(); ?>
+    <?php $this->viteAssets(); ?>
 </head>
 <body class="min-h-screen bg-blue-950">
     <header>

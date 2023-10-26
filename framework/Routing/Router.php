@@ -4,7 +4,6 @@ namespace Framework\Routing;
 
 use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\NotFoundException;
-use Framework\Exceptions\ServerError;
 use Framework\Requests\Response;
 use Framework\Requests\ResponseInterface;
 
@@ -86,27 +85,19 @@ class Router
 
         $requestPath = $_SERVER['REQUEST_URI'] ?? $uri;
 
-        try {
-            $matching = $this->match($requestMethod, $requestPath);
-        } catch (\Throwable $th) {
-            return $this->dispatchError($th);
-        }
+        $matching = $this->match($requestMethod, $requestPath);
 
         if ($matching) {
             $this->current = $matching;
 
             // if an error occurs, show it to the user
-            try {
-                $response = $matching->run();
-            } catch (\Throwable $th) {
-                $response = $this->dispatchError($th);
-            }
+            $response = $matching->run();
 
             return $response;
         }
 
         if (\in_array($requestPath, \array_keys($this->routes))) {
-            return $this->dispatchNotAllowed();
+            throw new MethodNotAllowedException();
         }
 
         // no matching route has been found
@@ -177,23 +168,6 @@ class Router
         }
 
         return null;
-    }
-
-    /**
-     * Dispatch a Server Error (code 500)
-     * and show related error message.
-     */
-    private function dispatchError(\Throwable $th): ResponseInterface
-    {
-        return Response::fromException(new ServerError($th->getMessage(), $th->getCode(), $th));
-    }
-
-    /**
-     * Dispatch a Not Allowed Error (code 405).
-     */
-    private function dispatchNotAllowed(): ResponseInterface
-    {
-        return Response::fromException(new MethodNotAllowedException(), 405);
     }
 
     /**

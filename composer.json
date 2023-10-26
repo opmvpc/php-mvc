@@ -32,7 +32,8 @@
     "pest": "pest --parallel"
   },
   "require": {
-    "vlucas/phpdotenv": "^5.5"
+    "vlucas/phpdotenv": "^5.5",
+    "filp/whoops": "^2.15"
   },
   "license": "MIT"
 }

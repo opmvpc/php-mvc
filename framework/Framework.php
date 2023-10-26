@@ -3,6 +3,10 @@
 namespace Framework;
 
 use Dotenv\Dotenv;
+use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
+use Whoops\Util\Misc;
 
 abstract class Framework
 {
@@ -38,6 +42,18 @@ abstract class Framework
                 'database' => $_ENV['DB_DATABASE'] ?? 'php-mvc-framework',
             ],
         ];
+
+        $run = new Run();
+        $run->pushHandler(new PrettyPageHandler());
+        $run->register();
+
+        if (Misc::isAjaxRequest()) {
+            $jsonHandler = new JsonResponseHandler();
+
+            $jsonHandler->setJsonApi(true);
+
+            $run->pushHandler($jsonHandler);
+        }
     }
 
     public static function get(): Framework

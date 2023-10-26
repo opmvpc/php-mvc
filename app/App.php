@@ -15,7 +15,11 @@ class App extends Framework
         $registerRoutes = require_once __DIR__.'/routes.php';
         $registerRoutes($router);
 
+        $hasError = false;
+        $response = null;
+
         $response = $router->dispatch();
+
         $response->send();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Requests\ResponseInterface;
 use Framework\Routing\HttpVerb;
 use Framework\Routing\Router;
@@ -107,10 +108,7 @@ describe('Router Tests', function () {
 
     it('should return a 500 internal server error response when an exception is thrown', function (string $uri, Closure $action) {
         $this->router->get($uri, $action);
-        $response = $this->router->dispatch();
-        expect($response->getBody())->toContain('Server Error');
-        expect($response->getBody())->toContain('An error');
-        expect($response->getStatusCode())->toBe(500);
+        expect(fn () => $this->router->dispatch())->toThrow(new Exception('An error'));
     })->with([
         [
             '/', fn () => throw new Exception('An error'),
@@ -130,9 +128,7 @@ describe('Router Tests', function () {
         $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
         $registerRoutes($this->router);
 
-        $response = $this->router->dispatch('/articles', HttpVerb::POST);
-        expect($response->getBody())->toContain('Method Not Allowed');
-        expect($response->getStatusCode())->toBe(405);
+        expect(fn () => $this->router->dispatch('/articles', HttpVerb::POST))->toThrow(new MethodNotAllowedException());
     });
 
     it('should match a route with a parameter', function (string $uri, Closure $action) {
@@ -234,9 +230,7 @@ describe('Router Tests', function () {
     it('should throw an error if a required parameter is missing', function (string $uri, Closure $action) {
         $this->router->get($uri, $action);
 
-        $response = $this->router->dispatch('/articles');
-        expect($response->getBody())->toContain('Missing route parameters: id');
-        expect($response->getStatusCode())->toBe(500);
+        expect(fn () => $this->router->match(HttpVerb::GET, '/articles'))->toThrow(new Exception('Missing route parameters: id'));
     })->with([
         [
             '/articles/{id}', fn () => 'coucou',
