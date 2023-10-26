@@ -2,6 +2,7 @@
 
 namespace Framework\View\Engine;
 
+use App\App;
 use Framework\View\View;
 
 class PhpEngine implements EngineInterface
@@ -65,5 +66,42 @@ class PhpEngine implements EngineInterface
     protected function includes(string $template, array $data = []): void
     {
         echo $this->render(new View($template, $data, $this->view->baseViewPath()));
+    }
+
+    protected function viteAssets(): string
+    {
+        if ('development' === App::get()->config('app.env')) {
+            // check with a http request if http://localhost:5173/resources/app.js responds
+            $manifestUrl = 'http://localhost:5173/resources/app.js';
+            $manifest = null;
+
+            $manifest = @file_get_contents($manifestUrl);
+
+            if (false === $manifest || null === $manifest) {
+                throw new \RuntimeException('Vite manifest file not found. Please run "npm run dev" command.');
+            }
+
+            return <<<'HTML'
+            <script type="module" src="http://localhost:5173/@vite/client"></script>
+            <script type="module" src="http://localhost:5173/resources/app.js"></script>
+            HTML;
+        }
+
+        $manifestPath = App::get()->basePath().'/public/assets/manifest.json';
+        if (!file_exists($manifestPath)) {
+            throw new \RuntimeException('Vite manifest file not found.');
+        }
+
+        $manifest = json_decode(file_get_contents($manifestPath), true);
+
+        $path = 'resources/main.js';
+        if (!isset($manifest[$path])) {
+            throw new \RuntimeException("Asset not found in Vite manifest: {$path}");
+        }
+
+        return <<<HTML
+        <link rel="stylesheet" href="/assets/{$manifest[$path]['css']}">
+        <script type="module" src="/assets/{$manifest[$path]['file']}"></script>
+        HTML;
     }
 }

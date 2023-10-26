@@ -1,0 +1,29 @@
+{
+  "name": "php-mvc",
+  "version": "1.0.0",
+  "description": "php mvc framework",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opmvpc/php-mvc.git"
+  },
+  "keywords": [
+    "php",
+    "mvc",
+    "framework"
+  ],
+  "author": "opmvpc",
+  "license": "MIT",
+  "homepage": "https://github.com/opmvpc/php-mvc#readme",
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "vite": "^4.5.0"
+  }
+}

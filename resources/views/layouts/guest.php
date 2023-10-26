@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP MVC Framework</title>
+    <?php echo $this->viteAssets(); ?>
 </head>
-<body>
+<body class="min-h-screen bg-blue-950">
     <header>
         <?php $this->includes('layouts/nav'); ?>
     </header>
-    <main>
+    <main class="my-16 p-4 mx-auto container bg-blue-300 rounded-md prose">
         <?php echo $contents; ?>
     </main>
 </body>
