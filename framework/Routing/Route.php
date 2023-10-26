@@ -6,6 +6,7 @@ use Framework\Exceptions\ServerError;
 use Framework\Requests\Request;
 use Framework\Requests\Response;
 use Framework\Requests\ResponseInterface;
+use Framework\View\View;
 
 class Route
 {
@@ -103,6 +104,11 @@ class Route
         if ($res instanceof ResponseInterface) {
             return $res;
         }
+
+        if ($res instanceof View) {
+            return new Response($res->__toString(), 200, ['Content-Type' => 'text/html']);
+        }
+
         if (\is_string($res)) {
             return new Response($res);
         }

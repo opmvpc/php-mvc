@@ -242,4 +242,25 @@ describe('Router Tests', function () {
             '/articles/{id}', fn () => 'coucou',
         ],
     ]);
+
+    it('should work with a index and show route with parameter', function (array $routes) {
+        foreach ($routes as $route) {
+            $this->router->add($route['uri'], $route['method'], $route['action']);
+        }
+
+        $response = $this->router->match(HttpVerb::GET, '/articles');
+        expect($response->path())->toBe('/articles');
+        expect($response->params())->toBe([]);
+
+        $response = $this->router->match(HttpVerb::GET, '/articles/1');
+        expect($response->path())->toBe('/articles/{id}');
+        expect($response->params())->toBe(['id' => '1']);
+    })->with([
+        'routes' => [
+            [
+                ['uri' => '/articles', 'method' => HttpVerb::GET, 'action' => fn () => 'index'],
+                ['uri' => '/articles/{id}', 'method' => HttpVerb::GET, 'action' => fn () => 'show'],
+            ],
+        ],
+    ]);
 });

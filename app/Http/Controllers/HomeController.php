@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Framework\View\View;
+
 class HomeController extends BaseController
 {
-    public function index(): string
+    public function index(): View
     {
-        return '<h1>Hello</h1>';
+        return new View('index');
     }
 }

@@ -29,7 +29,7 @@
       "@pest"
     ],
     "phpstan": "phpstan analyse -c phpstan.neon --memory-limit 1G",
-    "pest": "pest --parallel --profile"
+    "pest": "pest --parallel"
   },
   "require": {
     "vlucas/phpdotenv": "^5.5"
