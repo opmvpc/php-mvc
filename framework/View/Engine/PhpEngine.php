@@ -11,6 +11,8 @@ class PhpEngine implements EngineInterface
      */
     protected array $layouts;
 
+    protected View $view;
+
     public function __construct()
     {
         $this->layouts = [];
@@ -18,6 +20,7 @@ class PhpEngine implements EngineInterface
 
     public function render(View $view): string
     {
+        $this->view = $view;
         $data = $view->data();
         extract($data);
 
@@ -34,7 +37,7 @@ class PhpEngine implements EngineInterface
         if (isset($this->layouts[$view->path()])) {
             $layout = $this->layouts[$view->path()];
             $data = \array_merge($view->data(), ['contents' => $contents]);
-            $contentsWithLayout = $this->render(new View($layout, $data));
+            $contentsWithLayout = $this->render(new View($layout, $data, $view->baseViewPath()));
 
             return $contentsWithLayout;
         }
@@ -61,6 +64,6 @@ class PhpEngine implements EngineInterface
      */
     protected function includes(string $template, array $data = []): void
     {
-        echo $this->render(new View($template, $data));
+        echo $this->render(new View($template, $data, $this->view->baseViewPath()));
     }
 }

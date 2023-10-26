@@ -2,6 +2,7 @@
 
 namespace Framework\View;
 
+use App\App;
 use Framework\View\Engine\EngineInterface;
 use Framework\View\Engine\PhpEngine;
 
@@ -15,13 +16,14 @@ class View
      */
     protected array $data;
 
-    protected string $baseViewPath = 'resources/views';
+    protected string $baseViewPath;
 
     /**
      * @param array<string, mixed> $data
      */
-    public function __construct(string $path, array $data = [])
+    public function __construct(string $path, array $data = [], string $baseViewPath = 'resources/views')
     {
+        $this->baseViewPath = $baseViewPath;
         $this->engine = new PhpEngine();
         $this->path = $this->getFullPath($path);
         $this->data = $data;
@@ -45,16 +47,9 @@ class View
         return $this->path;
     }
 
-    public function withBaseViewPath(string $path): View
-    {
-        $this->baseViewPath = $path;
-
-        return $this;
-    }
-
     public function getFullPath(string $path): string
     {
-        $realPath = __DIR__.'/../../'.$this->baseViewPath.'/'.$path.'.php';
+        $realPath = App::get()->basePath().'/'.$this->baseViewPath.'/'.$path.'.php';
         $realPath = \realpath($realPath);
 
         if (false === $realPath) {
@@ -62,5 +57,10 @@ class View
         }
 
         return $realPath;
+    }
+
+    public function baseViewPath(): string
+    {
+        return $this->baseViewPath;
     }
 }

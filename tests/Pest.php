@@ -24,6 +24,8 @@
 |
 */
 
+use Framework\View\View;
+
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
@@ -39,7 +41,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function view(string $path, array $data = []): View
 {
-    // ..
+    return new View($path, $data, 'tests/framework/View/fixtures/views');
 }

@@ -13,11 +13,15 @@ abstract class Framework
 
     private static Framework $instance;
 
+    private string $basePath;
+
     final private function __construct() {}
 
     protected function setup(): void
     {
-        $dotenv = Dotenv::createImmutable(__DIR__.'/../');
+        $this->setBasePath();
+
+        $dotenv = Dotenv::createImmutable($this->basePath);
         $dotenv->load();
 
         $this->config = [
@@ -64,4 +68,20 @@ abstract class Framework
     }
 
     abstract public function run(): void;
+
+    public function basePath(): string
+    {
+        return $this->basePath;
+    }
+
+    private function setBasePath(): void
+    {
+        $basePath = \realpath(__DIR__.'/../');
+
+        if (false === $basePath) {
+            throw new \Exception('Base path not found');
+        }
+
+        $this->basePath = $basePath;
+    }
 }
