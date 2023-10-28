@@ -124,6 +124,7 @@ class PhpEngine implements EngineInterface
         HTML;
     }
 
+    // @phpstan-ignore-next-line
     protected function route(string $name, array $params = []): string
     {
         return App::get()->router()->route($name, $params);

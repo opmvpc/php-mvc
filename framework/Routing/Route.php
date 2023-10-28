@@ -2,10 +2,18 @@
 
 namespace Framework\Routing;
 
+use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\ServerError;
+use Framework\Exceptions\ValidationException;
+use Framework\Requests\JsonResponse;
+use Framework\Requests\MessageInterface;
+use Framework\Requests\Redirect;
 use Framework\Requests\Request;
+use Framework\Requests\RequestInterface;
 use Framework\Requests\Response;
 use Framework\Requests\ResponseInterface;
+use Framework\Requests\ViewResponse;
+use Framework\Sessions\Session;
 use Framework\View\View;
 
 class Route
@@ -88,17 +96,30 @@ class Route
         return new Route($path, HttpVerb::DELETE, $action);
     }
 
-    public function run(): ResponseInterface
+    public function run(RequestInterface $request): MessageInterface
     {
-        $context = new Context($this, new Request());
+        $context = new Context($this, $request);
 
         $res = null;
-        if (\is_array($this->action)) {
-            [$controllerName, $methodName] = $this->action;
 
-            $res = (new $controllerName())->{$methodName}($context);
-        } else {
-            $res = ($this->action)($context);
+        try {
+            if (\is_array($this->action)) {
+                [$controllerName, $methodName] = $this->action;
+
+                $res = (new $controllerName())->{$methodName}($context);
+            } else {
+                $res = ($this->action)($context);
+            }
+        } catch (ValidationException $exception) {
+            // check if the request is an ajax request
+            if ($request->isJson()) {
+                return new JsonResponse($exception->errorBag(), 422);
+            }
+
+            // if not, redirect to the previous page with errors in session
+            Session::set('errors', $exception->errorBag());
+
+            return (new Redirect())->back();
         }
 
         if ($res instanceof ResponseInterface) {
@@ -106,7 +127,7 @@ class Route
         }
 
         if ($res instanceof View) {
-            return new Response($res->__toString(), 200, ['Content-Type' => 'text/html']);
+            return new ViewResponse($res);
         }
 
         if (\is_string($res)) {
@@ -116,7 +137,7 @@ class Route
         $json = json_encode($res, JSON_PRETTY_PRINT);
 
         if (false !== $json) {
-            return new Response($json, 200, ['Content-Type' => 'application/json']);
+            return new JsonResponse($res);
         }
 
         throw new ServerError('Unable to encode response');
@@ -154,6 +175,9 @@ class Route
         if ($this->path === $path && $this->method === $method) {
             return true;
         }
+        if ($this->path === $path && $this->method !== $method) {
+            throw new MethodNotAllowedException();
+        }
 
         $paramNames = [];
         $requiredParams = [];
@@ -184,6 +208,11 @@ class Route
 
         // on ajoute les délimiteurs de regex
         \preg_match_all("#{$pattern}#", $this->normalizePath($path), $matches);
+
+        // si la regex à matché, on check si la méthode est la bonne
+        if (count($matches[0]) > 0 && $this->method !== $method) {
+            throw new MethodNotAllowedException();
+        }
 
         $paramValues = [];
         // on récupère les valeurs des paramètres

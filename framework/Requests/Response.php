@@ -3,12 +3,12 @@
 namespace Framework\Requests;
 
 use App\App;
-use Framework\Exceptions\ExceptionInterface;
+use Framework\Exceptions\RenderableException;
 
 class Response extends Message implements ResponseInterface
 {
-    private int $statusCode;
-    private string $reasonPhrase;
+    protected int $statusCode;
+    protected string $reasonPhrase;
 
     /**
      * @param array<string, string> $headers
@@ -39,18 +39,7 @@ class Response extends Message implements ResponseInterface
         return $clone;
     }
 
-    public function send(): void
-    {
-        http_response_code($this->statusCode);
-
-        foreach ($this->headers as $name => $values) {
-            header(sprintf('%s: %s', $name, $values), false);
-        }
-
-        echo $this->body;
-    }
-
-    public static function fromException(ExceptionInterface $e, int $code = 500): ResponseInterface
+    public static function fromException(RenderableException $e, int $code = 500): ResponseInterface
     {
         $response = (new Response())
             ->withStatus($code, 'Internal Server Error')

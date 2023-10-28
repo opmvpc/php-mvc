@@ -2,8 +2,9 @@
 
 namespace Framework\Routing;
 
-use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\NotFoundException;
+use Framework\Requests\MessageInterface;
+use Framework\Requests\Request;
 use Framework\Requests\Response;
 use Framework\Requests\ResponseInterface;
 
@@ -75,29 +76,17 @@ class Router
     /**
      * Dispatch a request url to the right handler.
      */
-    public function dispatch(string $uri = '/', HttpVerb $method = HttpVerb::GET): ResponseInterface
+    public function dispatch(string $uri = '/', HttpVerb $method = HttpVerb::GET): MessageInterface
     {
-        if (isset($_SERVER['REQUEST_METHOD'])) {
-            $requestMethod = HttpVerb::from($_SERVER['REQUEST_METHOD']);
-        } else {
-            $requestMethod = $method;
-        }
+        $request = Request::fromGlobals($uri, $method);
 
-        $requestPath = $_SERVER['REQUEST_URI'] ?? $uri;
-
-        $matching = $this->match($requestMethod, $requestPath);
+        $matching = $this->match($request->getMethod(), $request->getUri());
 
         if ($matching) {
             $this->current = $matching;
 
             // if an error occurs, show it to the user
-            $response = $matching->run();
-
-            return $response;
-        }
-
-        if (\in_array($requestPath, \array_keys($this->routes))) {
-            throw new MethodNotAllowedException();
+            return $matching->run($request);
         }
 
         // no matching route has been found

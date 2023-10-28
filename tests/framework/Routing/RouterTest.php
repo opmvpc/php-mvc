@@ -131,6 +131,13 @@ describe('Router Tests', function () {
         expect(fn () => $this->router->dispatch('/articles', HttpVerb::POST))->toThrow(new MethodNotAllowedException());
     });
 
+    it('should throw a not allowed exception when method is not allowed with route parameters', function () {
+        $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
+        $registerRoutes($this->router);
+
+        expect(fn () => $this->router->dispatch('/articles/1', HttpVerb::POST))->toThrow(new MethodNotAllowedException());
+    });
+
     it('should match a route with a parameter', function (string $uri, Closure $action) {
         $this->router->get($uri, $action);
 

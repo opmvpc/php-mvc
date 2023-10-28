@@ -1,7 +1,7 @@
 {
-  "name": "php-mvc",
+  "name": "php-mvc-front",
   "version": "1.0.0",
-  "description": "php mvc framework",
+  "description": "php mvc framework front tools",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

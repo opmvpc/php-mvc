@@ -2,7 +2,7 @@
 
 namespace Framework\Requests;
 
-use Framework\Exceptions\ExceptionInterface;
+use Framework\Exceptions\RenderableException;
 
 interface ResponseInterface extends MessageInterface
 {
@@ -12,7 +12,5 @@ interface ResponseInterface extends MessageInterface
 
     public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface;
 
-    public function send(): void;
-
-    public static function fromException(ExceptionInterface $e, int $code = 500): ResponseInterface;
+    public static function fromException(RenderableException $e, int $code = 500): ResponseInterface;
 }

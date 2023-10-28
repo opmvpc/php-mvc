@@ -18,4 +18,6 @@ interface MessageInterface
     public function withHeader(string $name, string $value): MessageInterface;
 
     public function withBody(string $body): MessageInterface;
+
+    public function send(): void;
 }

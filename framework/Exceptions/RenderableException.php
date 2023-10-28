@@ -2,7 +2,7 @@
 
 namespace Framework\Exceptions;
 
-interface ExceptionInterface extends \Throwable
+interface RenderableException extends \Throwable
 {
     public function render(): string;
 }

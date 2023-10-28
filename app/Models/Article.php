@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 class Article
@@ -25,7 +27,7 @@ class Article
         return $this->content;
     }
 
-    public static function findOrFail(null|int|string $id): ?Article
+    public static function findOrFail(mixed $id): ?Article
     {
         if (null === $id) {
             throw new \Exception('Article id is required');
@@ -33,6 +35,10 @@ class Article
 
         if (\is_string($id)) {
             $id = (int) $id;
+        }
+
+        if (!\is_int($id)) {
+            throw new \Exception('Article id must be an integer');
         }
 
         foreach (static::articles() as $article) {

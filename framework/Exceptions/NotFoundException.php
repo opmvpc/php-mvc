@@ -2,7 +2,7 @@
 
 namespace Framework\Exceptions;
 
-class NotFoundException extends \Exception implements ExceptionInterface
+class NotFoundException extends \Exception implements RenderableException
 {
     public function render(): string
     {

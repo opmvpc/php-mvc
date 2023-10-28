@@ -10,7 +10,7 @@
     <header>
         <?php $this->includes('layouts/nav'); ?>
     </header>
-    <main class="my-16 p-4 mx-auto container bg-blue-300 rounded-md prose">
+    <main class="my-16 p-4 mx-auto container bg-blue-300 rounded-md prose prose-zinc">
         <?php echo $contents; ?>
     </main>
 </body>

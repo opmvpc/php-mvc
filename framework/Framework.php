@@ -36,6 +36,7 @@ abstract class Framework
                 'name' => $_ENV['APP_NAME'] ?? 'APP PHP MVC Framework',
                 'env' => $_ENV['APP_ENV'] ?? 'production',
                 'debug' => $_ENV['APP_DEBUG'] ?? false,
+                'lang' => 'en',
             ],
             'db' => [
                 'host' => $_ENV['DB_HOST'] ?? 'localhost',

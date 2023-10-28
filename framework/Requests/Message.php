@@ -52,4 +52,18 @@ abstract class Message implements MessageInterface
 
         return $this;
     }
+
+    public function send(): void
+    {
+        if (property_exists($this, 'statusCode')) {
+            $statusCode = 'statusCode';
+            http_response_code($this->${$statusCode} ?? 200);
+        }
+
+        foreach ($this->headers as $name => $values) {
+            header(sprintf('%s: %s', $name, $values), false);
+        }
+
+        echo $this->body;
+    }
 }

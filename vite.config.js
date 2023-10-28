@@ -31,7 +31,7 @@ function CustomHmr() {
     name: "custom-hmr",
     enforce: "post",
     handleHotUpdate({ file, server }) {
-      if (file.endsWith(".php") && file.includes("tests/") === false) {
+      if (file.endsWith(".php") && file.includes("/tests/") === false) {
         console.log("reloading php file...");
 
         server.ws.send({
