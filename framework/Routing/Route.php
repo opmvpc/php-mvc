@@ -186,9 +186,8 @@ class Route
         \preg_match_all("#{$pattern}#", $this->normalizePath($path), $matches);
 
         $paramValues = [];
-
         // on récupère les valeurs des paramètres
-        if (count($matches) > 0) {
+        if (count($matches[1]) > 0) {
             $paramValues = \array_slice($matches, 1);
             $paramValues = \array_map(function ($value) {
                 if (count($value) > 0) {
@@ -212,9 +211,6 @@ class Route
                 if (null === $paramValue && \in_array($paramName, $requiredParams)) {
                     $missingParams[] = $paramName;
                 }
-            }
-            if (count($missingParams) > 0) {
-                throw new \Exception('Missing route parameters: '.\implode(', ', $missingParams));
             }
 
             return true;

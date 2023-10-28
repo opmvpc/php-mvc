@@ -227,16 +227,6 @@ describe('Router Tests', function () {
         ],
     ]);
 
-    it('should throw an error if a required parameter is missing', function (string $uri, Closure $action) {
-        $this->router->get($uri, $action);
-
-        expect(fn () => $this->router->match(HttpVerb::GET, '/articles'))->toThrow(new Exception('Missing route parameters: id'));
-    })->with([
-        [
-            '/articles/{id}', fn () => 'coucou',
-        ],
-    ]);
-
     it('should work with a index and show route with parameter', function (array $routes) {
         foreach ($routes as $route) {
             $this->router->add($route['uri'], $route['method'], $route['action']);
@@ -254,6 +244,27 @@ describe('Router Tests', function () {
             [
                 ['uri' => '/articles', 'method' => HttpVerb::GET, 'action' => fn () => 'index'],
                 ['uri' => '/articles/{id}', 'method' => HttpVerb::GET, 'action' => fn () => 'show'],
+            ],
+        ],
+    ]);
+
+    it('should match a simple route with multiple routes registered', function (array $routes) {
+        foreach ($routes as $route) {
+            $this->router->add($route['uri'], $route['method'], $route['action']);
+        }
+
+        $response = $this->router->match(HttpVerb::GET, '/articles/1');
+        expect($response->path())->toBe('/articles/{id}');
+        expect($response->params())->toBe(['id' => '1']);
+
+        $response = $this->router->match(HttpVerb::GET, '/test');
+        expect($response->path())->toBe('/test');
+        expect($response->params())->toBe([]);
+    })->with([
+        'routes' => [
+            [
+                ['uri' => '/articles/{id}', 'method' => HttpVerb::GET, 'action' => fn () => 'show'],
+                ['uri' => '/test', 'method' => HttpVerb::GET, 'action' => fn () => 'test'],
             ],
         ],
     ]);
