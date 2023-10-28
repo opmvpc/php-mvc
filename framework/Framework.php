@@ -3,6 +3,7 @@
 namespace Framework;
 
 use Dotenv\Dotenv;
+use Framework\Routing\Router;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -18,6 +19,8 @@ abstract class Framework
     private static Framework $instance;
 
     private string $basePath;
+
+    private Router $router;
 
     final private function __construct() {}
 
@@ -46,6 +49,18 @@ abstract class Framework
         if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
             $this->setupWhoops();
         }
+    }
+
+    abstract public function registerRoutes(): void;
+
+    public function router(): Router
+    {
+        if (!isset($this->router)) {
+            $this->router = new Router();
+            $this->registerRoutes();
+        }
+
+        return $this->router;
     }
 
     public static function get(): Framework

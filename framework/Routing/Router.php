@@ -27,9 +27,9 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
-    public function add(string $path, HttpVerb $method, mixed $action): void
+    public function add(string $path, HttpVerb $method, mixed $action): Route
     {
-        $this->routes[$path] = Route::add($path, $method, $action);
+        return $this->routes[$path] = Route::add($path, $method, $action);
     }
 
     /**
@@ -37,9 +37,9 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
-    public function get(string $path, mixed $action): void
+    public function get(string $path, mixed $action): Route
     {
-        $this->routes[$path] = Route::get($path, $action);
+        return $this->routes[$path] = Route::get($path, $action);
     }
 
     /**
@@ -47,9 +47,9 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
-    public function post(string $path, mixed $action): void
+    public function post(string $path, mixed $action): Route
     {
-        $this->routes[$path] = Route::post($path, $action);
+        return $this->routes[$path] = Route::post($path, $action);
     }
 
     /**
@@ -57,9 +57,9 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
-    public function put(string $path, mixed $action): void
+    public function put(string $path, mixed $action): Route
     {
-        $this->routes[$path] = Route::put($path, $action);
+        return $this->routes[$path] = Route::put($path, $action);
     }
 
     /**
@@ -67,9 +67,9 @@ class Router
      *
      * @param callable|list{0: class-string, 1: callable-string} $action
      */
-    public function delete(string $path, mixed $action): void
+    public function delete(string $path, mixed $action): Route
     {
-        $this->routes[$path] = Route::delete($path, $action);
+        return $this->routes[$path] = Route::delete($path, $action);
     }
 
     /**
@@ -104,11 +104,9 @@ class Router
         return $this->dispatchNotFound();
     }
 
-    public function redirect(string $path): void
+    public static function redirect(string $path): Response
     {
-        \header('Location: '.$path, true, 301);
-
-        exit;
+        return new Response('', 302, ['Location' => $path]);
     }
 
     /**

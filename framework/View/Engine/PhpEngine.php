@@ -123,4 +123,9 @@ class PhpEngine implements EngineInterface
         <script type="module" src="/assets/{$file}"></script>
         HTML;
     }
+
+    protected function route(string $name, array $params = []): string
+    {
+        return App::get()->router()->route($name, $params);
+    }
 }

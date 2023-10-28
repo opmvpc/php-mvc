@@ -3,20 +3,20 @@
 namespace App;
 
 use Framework\Framework;
-use Framework\Routing\Router;
 
 class App extends Framework
 {
     public function run(): void
     {
-        $router = new Router();
-
-        // routes registering
-        $registerRoutes = require_once __DIR__.'/routes.php';
-        $registerRoutes($router);
-
-        $response = $router->dispatch();
+        $response = $this->router()->dispatch();
 
         $response->send();
+    }
+
+    public function registerRoutes(): void
+    {
+        // routes registering
+        $registerRoutes = require_once __DIR__.'/routes.php';
+        $registerRoutes($this->router());
     }
 }
