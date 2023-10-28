@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Framework\Requests;
 
 use Framework\Routing\HttpVerb;
