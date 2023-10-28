@@ -43,16 +43,8 @@ abstract class Framework
             ],
         ];
 
-        $run = new Run();
-        $run->pushHandler(new PrettyPageHandler());
-        $run->register();
-
-        if (Misc::isAjaxRequest()) {
-            $jsonHandler = new JsonResponseHandler();
-
-            $jsonHandler->setJsonApi(true);
-
-            $run->pushHandler($jsonHandler);
+        if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
+            $this->setupWhoops();
         }
     }
 
@@ -88,6 +80,23 @@ abstract class Framework
     public function basePath(): string
     {
         return $this->basePath;
+    }
+
+    private function setupWhoops(): void
+    {
+        $run = new Run();
+
+        if (Misc::isAjaxRequest()) {
+            $jsonHandler = new JsonResponseHandler();
+            $jsonHandler->setJsonApi(true);
+            $run->pushHandler($jsonHandler);
+        } else {
+            $prettyPageHandler = new PrettyPageHandler();
+            $prettyPageHandler->setPageTitle('Whoops! There was a problem.');
+            $run->pushHandler($prettyPageHandler);
+        }
+
+        $run->register();
     }
 
     private function setBasePath(): void
