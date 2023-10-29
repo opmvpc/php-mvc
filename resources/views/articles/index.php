@@ -1,4 +1,10 @@
-<?php $this->extends('layouts/guest'); ?>
+<?php
+use Framework\Support\Str;
+
+$this->extends('layouts/guest');
+
+?>
+
 <div class="flex justify-between">
     <h1>Articles</h1>
     <div>

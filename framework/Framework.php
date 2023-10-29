@@ -29,7 +29,6 @@ abstract class Framework
 
     protected function setup(): void
     {
-        $this->registerClassAliases();
         $this->setBasePath();
         $this->loadConfig();
 
@@ -141,18 +140,5 @@ abstract class Framework
         }
 
         $this->basePath = $basePath;
-    }
-
-    private function registerClassAliases(): void
-    {
-        spl_autoload_register(function (string $class) {
-            if ('Str' === $class) {
-                class_alias('Framework\Support\Str', 'Str');
-            }
-
-            if ('Session' === $class) {
-                class_alias('Framework\Support\Session', 'Session');
-            }
-        });
     }
 }
