@@ -19,4 +19,6 @@ interface RequestInterface extends MessageInterface
     public function isJson(): bool;
 
     public static function fromGlobals(): RequestInterface;
+
+    public function id(): string;
 }

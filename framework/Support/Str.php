@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Framework\Support;
 
-use App\App;
-
 class Str
 {
+    public static function __(string $key): string
+    {
+        return Translation::translate($key);
+    }
+
     public static function slug(string $string): string
     {
         return strtolower(
@@ -21,23 +24,11 @@ class Str
 
     public static function translate(string $key): string
     {
-        $lang = App::get()->config('app.lang');
-        if (!\is_string($lang)) {
-            throw new \Exception('Invalid lang config');
-        }
+        return Translation::translate($key);
+    }
 
-        $basePath = App::get()->basePath();
-
-        // explode only once
-        [$file, $key] = explode('.', $key, 2);
-        $filePath = "{$basePath}/resources/lang/{$lang}/{$file}.php";
-
-        if (!file_exists($filePath) && 'en' !== $lang) {
-            throw new \Exception("Translation file {$file} not found (lang: {$lang})");
-        }
-
-        $translations = include $filePath;
-
-        return $translations[$key] ?? $key;
+    public static function escape(string $string): string
+    {
+        return \htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }

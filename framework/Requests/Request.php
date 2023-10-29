@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Framework\Requests;
 
 use Framework\Routing\HttpVerb;
+use Ramsey\Uuid\Uuid;
 
 class Request extends Message implements RequestInterface
 {
+    private string $id;
     private HttpVerb $method;
     private string $uri;
 
@@ -17,6 +19,7 @@ class Request extends Message implements RequestInterface
     public function __construct(string $body = '', HttpVerb $method = HttpVerb::GET, string $uri = '/', array $headers = [])
     {
         parent::__construct($body, $headers);
+        $this->id = Uuid::uuid4()->toString();
         $this->method = $method;
         $this->uri = $uri;
     }
@@ -76,5 +79,10 @@ class Request extends Message implements RequestInterface
     public function isJson(): bool
     {
         return 'application/json' === $this->getHeader('Content-Type');
+    }
+
+    public function id(): string
+    {
+        return $this->id;
     }
 }

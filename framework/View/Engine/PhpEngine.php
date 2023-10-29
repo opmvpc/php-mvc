@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Framework\View\Engine;
 
 use App\App;
+use Framework\Support\Str;
 use Framework\View\View;
 
 class PhpEngine implements EngineInterface
@@ -50,7 +51,7 @@ class PhpEngine implements EngineInterface
 
     protected function escape(string $content): string
     {
-        return \htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return Str::escape($content);
     }
 
     protected function extends(string $template): self

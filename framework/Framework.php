@@ -28,26 +28,9 @@ abstract class Framework
 
     protected function setup(): void
     {
+        $this->registerClassAliases();
         $this->setBasePath();
-
-        $dotenv = Dotenv::createImmutable($this->basePath);
-        $dotenv->load();
-
-        $this->config = [
-            'app' => [
-                'name' => $_ENV['APP_NAME'] ?? 'APP PHP MVC Framework',
-                'env' => $_ENV['APP_ENV'] ?? 'production',
-                'debug' => $_ENV['APP_DEBUG'] ?? false,
-                'lang' => 'en',
-            ],
-            'db' => [
-                'host' => $_ENV['DB_HOST'] ?? 'localhost',
-                'port' => $_ENV['DB_PORT'] ?? '3306',
-                'user' => $_ENV['DB_USER'] ?? 'root',
-                'password' => $_ENV['DB_PASSWORD'] ?? '',
-                'database' => $_ENV['DB_DATABASE'] ?? 'php-mvc-framework',
-            ],
-        ];
+        $this->loadConfig();
 
         if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
             $this->setupWhoops();
@@ -93,7 +76,12 @@ abstract class Framework
         return $config;
     }
 
-    abstract public function run(): void;
+    public function run(): void
+    {
+        $response = $this->router()->dispatch();
+
+        $response->send();
+    }
 
     public function basePath(): string
     {
@@ -117,6 +105,28 @@ abstract class Framework
         $run->register();
     }
 
+    private function loadConfig(): void
+    {
+        $dotenv = Dotenv::createImmutable($this->basePath);
+        $dotenv->load();
+
+        $this->config = [
+            'app' => [
+                'name' => $_ENV['APP_NAME'] ?? 'APP PHP MVC Framework',
+                'env' => $_ENV['APP_ENV'] ?? 'production',
+                'debug' => $_ENV['APP_DEBUG'] ?? false,
+                'lang' => 'fr',
+            ],
+            'db' => [
+                'host' => $_ENV['DB_HOST'] ?? 'localhost',
+                'port' => $_ENV['DB_PORT'] ?? '3306',
+                'user' => $_ENV['DB_USER'] ?? 'root',
+                'password' => $_ENV['DB_PASSWORD'] ?? '',
+                'database' => $_ENV['DB_DATABASE'] ?? 'php-mvc-framework',
+            ],
+        ];
+    }
+
     private function setBasePath(): void
     {
         $basePath = \realpath(__DIR__.'/../');
@@ -126,5 +136,18 @@ abstract class Framework
         }
 
         $this->basePath = $basePath;
+    }
+
+    private function registerClassAliases(): void
+    {
+        spl_autoload_register(function (string $class) {
+            if ('Str' === $class) {
+                class_alias('Framework\Support\Str', 'Str');
+            }
+
+            if ('Session' === $class) {
+                class_alias('Framework\Support\Session', 'Session');
+            }
+        });
     }
 }

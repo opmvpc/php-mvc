@@ -5,7 +5,11 @@
   "autoload": {
     "psr-4": {
       "App\\": "app/",
-      "Framework\\": "framework/"
+      "Framework\\": "framework/",
+      "": [
+        "framework/Support/Str.php",
+        "framework/Sessions/Session.php"
+      ]
     }
   },
   "authors": [
@@ -34,7 +38,8 @@
     "pest": "pest --parallel --display-warnings --display-notices --display-errors --stop-on-failure"
   },
   "require": {
-    "vlucas/phpdotenv": "^5.5"
+    "vlucas/phpdotenv": "^5.5",
+    "ramsey/uuid": "^4.7"
   },
   "license": "MIT"
 }

@@ -15,7 +15,7 @@
             'id' => 'title',
         ]); ?>
         <?php $this->includes('components/input_error', [
-            'message' => 'content',
+            'key' => 'title',
         ]); ?>
     </div>
 
@@ -30,7 +30,7 @@
             'rows' => 10,
         ]); ?>
         <?php $this->includes('components/input_error', [
-            'message' => 'content',
+            'key' => 'content',
         ]); ?>
     </div>
 

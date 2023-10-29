@@ -22,7 +22,7 @@ class Required implements RuleInterface
     public function message(array $data, string $field): string
     {
         $template = Str::translate('validation.required');
-
+    
         // translate the field name
         $translatedField = Str::translate("fields.{$field}");
 

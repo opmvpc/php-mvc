@@ -8,13 +8,6 @@ use Framework\Framework;
 
 class App extends Framework
 {
-    public function run(): void
-    {
-        $response = $this->router()->dispatch();
-
-        $response->send();
-    }
-
     public function registerRoutes(): void
     {
         // routes registering
