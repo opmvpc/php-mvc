@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Framework\View\Engine;
 
 use App\App;
+use Framework\Routing\Csrf;
+use Framework\Support\Session;
 use Framework\Support\Str;
 use Framework\View\View;
 
@@ -131,5 +133,21 @@ class PhpEngine implements EngineInterface
     protected function route(string $name, array $params = []): string
     {
         return App::get()->router()->route($name, $params);
+    }
+
+    protected function old(string $key, string $default = ''): string
+    {
+        $oldValues = Session::get('_old_inputs', []);
+
+        return $oldValues[$key] ?? $default;
+    }
+
+    protected function csrf(): void
+    {
+        $token = Csrf::token();
+
+        echo <<<HTML
+        <input type="hidden" name="_csrf_token" value="{$token}">
+        HTML;
     }
 }

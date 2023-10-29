@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Framework\Requests;
 
 use Framework\Routing\HttpVerb;
-use Ramsey\Uuid\Uuid;
+use Framework\Support\Str;
 
 class Request extends Message implements RequestInterface
 {
@@ -19,7 +19,7 @@ class Request extends Message implements RequestInterface
     public function __construct(string $body = '', HttpVerb $method = HttpVerb::GET, string $uri = '/', array $headers = [])
     {
         parent::__construct($body, $headers);
-        $this->id = Uuid::uuid4()->toString();
+        $this->id = Str::uuid();
         $this->method = $method;
         $this->uri = $uri;
     }

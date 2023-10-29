@@ -82,8 +82,6 @@ class Router
     {
         $request = Request::fromGlobals($uri, $method);
 
-        dd($request);
-
         $matching = $this->match($request->getMethod(), $request->getUri());
 
         if ($matching) {

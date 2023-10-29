@@ -1,8 +1,7 @@
 <?php
 $key = $data['key'] ?? throw new \InvalidArgumentException('Key is required');
-$errors = \Framework\Support\Session::get('errors') ?? [];
+$errors = \Framework\Support\Session::get('_errors') ?? [];
 $message = $errors[$key][0] ?? null;
-
 ?>
 
 <?php if ($message) { ?>

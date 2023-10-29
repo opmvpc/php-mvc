@@ -101,6 +101,14 @@ class Route
     {
         $context = new Context($this, $request);
 
+        if (HttpVerb::GET !== $request->getMethod()) {
+            $post = $context->postParams();
+            $json = $context->jsonParams();
+            $csrfToken = $post['_csrf_token'] ?? $json['_csrf_token'] ?? '';
+
+            Csrf::validate($csrfToken);
+        }
+
         $res = null;
 
         try {
@@ -118,7 +126,8 @@ class Route
             }
 
             // if not, redirect to the previous page with errors in session
-            Session::set('errors', $exception->errorBag());
+            Session::flash('_errors', $exception->errorBag());
+            Session::flash('_old_inputs', $exception->input());
 
             return (new Redirect())->back();
         }

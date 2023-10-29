@@ -46,7 +46,7 @@ class Validator
         }
 
         if (count($errors) > 0) {
-            throw new ValidationException($errors);
+            throw new ValidationException($errors, $data);
         }
 
         return \array_intersect_key($data, $errors);

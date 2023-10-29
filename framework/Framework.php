@@ -6,6 +6,7 @@ namespace Framework;
 
 use Dotenv\Dotenv;
 use Framework\Routing\Router;
+use Framework\Support\Session;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -31,6 +32,8 @@ abstract class Framework
         $this->registerClassAliases();
         $this->setBasePath();
         $this->loadConfig();
+
+        Session::start();
 
         if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
             $this->setupWhoops();
@@ -81,6 +84,8 @@ abstract class Framework
         $response = $this->router()->dispatch();
 
         $response->send();
+
+        Session::stop();
     }
 
     public function basePath(): string
