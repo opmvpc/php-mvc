@@ -12,16 +12,19 @@ class Context
     private RequestInterface $request;
 
     /**
-     * @var null|array<string, string>
+     * @var array<string, string>
      */
-    private null|array $queryParams;
-
-    private mixed $jsonParams;
+    private array $queryParams;
 
     /**
-     * @var null|array<string, mixed>
+     * @var array<string, mixed>
      */
-    private null|array $postParams;
+    private array $jsonParams;
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $postParams;
 
     public function __construct(Route $route, RequestInterface $request)
     {
@@ -51,7 +54,10 @@ class Context
         return $this->queryParams[$key] ?? throw new \Exception('Query param not found');
     }
 
-    public function jsonParams(): mixed
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonParams(): array
     {
         return $this->jsonParams;
     }
@@ -82,9 +88,22 @@ class Context
         return $_GET;
     }
 
-    private function getJsonParams(): mixed
+    /**
+     * @return array<string, mixed>
+     */
+    private function getJsonParams(): array
     {
-        return json_decode($this->request->getBody(), true);
+        $params = json_decode($this->request->getBody(), true);
+
+        if (false === $params || null === $params) {
+            return [];
+        }
+
+        if (!\is_array($params)) {
+            throw new \Exception('Invalid JSON body');
+        }
+
+        return $params;
     }
 
     /**

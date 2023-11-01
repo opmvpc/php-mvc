@@ -148,11 +148,34 @@ abstract class Framework
 
     private function setupDB(): void
     {
+        $host = $this->config('db.host') ?? 'localhost';
+        $port = $this->config('db.port') ?? '3306';
+        $user = $this->config('db.user') ?? 'root';
+        $password = $this->config('db.password') ?? '';
+        $database = $this->config('db.database') ?? 'microvel';
+
+        if (!\is_string($host)) {
+            throw new \Exception('DB host is not a string');
+        }
+        if (!\is_string($port)) {
+            throw new \Exception('DB port is not an string');
+        }
+        if (!\is_string($user)) {
+            throw new \Exception('DB user is not a string');
+        }
+        if (!\is_string($password)) {
+            throw new \Exception('DB password is not a string');
+        }
+        if (!\is_string($database)) {
+            throw new \Exception('DB database is not a string');
+        }
+
         $dbConfig = new Database\DBConfig(
-            $this->config('db.host'),
-            $this->config('db.database'),
-            $this->config('db.user'),
-            $this->config('db.password'),
+            $host,
+            $port,
+            $database,
+            $user,
+            $password,
         );
 
         Database\DB::get($dbConfig);

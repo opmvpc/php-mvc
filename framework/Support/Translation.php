@@ -7,7 +7,7 @@ use App\App;
 class Translation
 {
     /**
-     * @var array<string, array<string, string>>
+     * @var null|array<string, array<string, string>>
      */
     private static null|array $translations = null;
 
@@ -16,7 +16,7 @@ class Translation
     public static function translate(string $key): string
     {
         if (null === self::$translations) {
-            static::addTranslations();
+            self::addTranslations();
         }
 
         // explode only once
@@ -27,8 +27,12 @@ class Translation
         }
 
         if (null === $fileName) {
+            $translationsFiles = self::$translations;
+            if (null === $translationsFiles) {
+                throw new \Exception('Invalid translations');
+            }
             // search in all files
-            foreach (static::$translations as $translations) {
+            foreach ($translationsFiles as $translations) {
                 if (\array_key_exists($key, $translations)) {
                     return $translations[$key];
                 }
@@ -37,7 +41,7 @@ class Translation
             return $key;
         }
 
-        return static::$translations[$fileName][$key] ?? $key;
+        return self::$translations[$fileName][$key] ?? $key;
     }
 
     private static function addTranslations(): void
@@ -52,6 +56,10 @@ class Translation
         // get all files from resources/lang
         $files = scandir("{$basePath}/resources/lang/{$lang}");
 
+        if (false === $files) {
+            throw new \Exception('Invalid lang directory');
+        }
+
         foreach ($files as $file) {
             if ('.' === $file || '..' === $file) {
                 continue;
@@ -65,7 +73,7 @@ class Translation
 
             $fileName = explode('.', $file)[0];
 
-            static::$translations[$fileName] = $translations;
+            self::$translations[$fileName] = $translations;
         }
     }
 }

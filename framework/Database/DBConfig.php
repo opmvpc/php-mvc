@@ -7,19 +7,21 @@ namespace Framework\Database;
 class DBConfig
 {
     private string $host;
-    private string $name;
+    private string $port;
+    private string $database;
     private string $user;
     private string $password;
     private string $dsn;
 
-    public function __construct(string $host, string $name, string $user, string $password)
+    public function __construct(string $host, string $port, string $database, string $user, string $password)
     {
         $this->host = $host;
-        $this->name = $name;
+        $this->port = $port;
+        $this->database = $database;
         $this->user = $user;
         $this->password = $password;
 
-        $this->dsn = 'mysql:dbname='.$this->name.';host='.$this->host;
+        $this->dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
     }
 
     public function dsn(): string
@@ -37,13 +39,18 @@ class DBConfig
         return $this->password;
     }
 
-    public function name(): string
+    public function database(): string
     {
-        return $this->name;
+        return $this->database;
     }
 
     public function host(): string
     {
         return $this->host;
+    }
+
+    public function port(): string
+    {
+        return $this->port;
     }
 }

@@ -20,30 +20,31 @@ class DB
             $dbConfig->user(),
             $dbConfig->password(),
             [
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
             ]
         );
     }
 
     /**
      * Get an instance of this class or creates it if it doesn't exist.
-     *
-     * @return static
      */
-    public static function get(null|DBConfig $dbConfig = null): self
+    public static function get(null|DBConfig $dbConfig = null): DB
     {
-        if (null === static::$instance) {
+        if (null === self::$instance) {
             if (null === $dbConfig) {
                 throw new \Exception('DBConfig is required');
             }
 
-            static::$instance = new static($dbConfig);
+            self::$instance = new DB($dbConfig);
         }
 
-        return static::$instance;
+        return self::$instance;
     }
 
     /**
      * Prepares and executes a SQL query.
+     *
+     * @param array<string, mixed> $prepareParams
      */
     public function run(string $sql, array $prepareParams = []): \PDOStatement
     {
@@ -55,13 +56,14 @@ class DB
 
     /**
      * Prepares and executes a SQL query.
+     *
+     * @param array<string, mixed> $prepareParams
      */
     public static function query(string $sql, array $prepareParams = []): \PDOStatement
     {
-        $db = static::get();
-        $stmt = $db->run($sql, $prepareParams);
+        $db = self::get();
 
-        return $stmt;
+        return $db->run($sql, $prepareParams);
     }
 
     /**

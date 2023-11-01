@@ -135,11 +135,13 @@ class PhpEngine implements EngineInterface
         return App::get()->router()->route($name, $params);
     }
 
-    protected function old(string $key, string $default = ''): string
+    protected function old(string $key, string $default = ''): mixed
     {
         $oldValues = Session::get('_old_inputs', []);
 
-        
+        if (!is_array($oldValues)) {
+            return $default;
+        }
 
         return $oldValues[$key] ?? $default;
     }

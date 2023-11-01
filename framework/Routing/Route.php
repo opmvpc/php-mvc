@@ -104,9 +104,14 @@ class Route
         if (HttpVerb::GET !== $request->getMethod()) {
             $post = $context->postParams();
             $json = $context->jsonParams();
+
+            if (!is_array($post)) {
+                throw new ServerError('Unable to parse request body');
+            }
+
             $csrfToken = $post['_csrf_token'] ?? $json['_csrf_token'] ?? '';
 
-            Csrf::validate($csrfToken);
+            Csrf::validate(\strval($csrfToken));
         }
 
         $res = null;

@@ -10,8 +10,8 @@ class Session
 
     public static function start(): void
     {
-        static::$id = Str::uuid();
-        session_start();
+        self::$id = Str::uuid();
+        \session_start();
     }
 
     public static function stop(): void
@@ -36,34 +36,47 @@ class Session
 
     public static function destroy(): void
     {
-        session_destroy();
+        \session_destroy();
     }
 
     public static function flash(string $key, mixed $value): void
     {
-        static::set($key, $value);
-        $flash = static::get('_flash', []);
-        $flash[static::$id][$key] = true;
-        static::set('_flash', $flash);
+        self::set($key, $value);
+        $flash = self::get('_flash', []);
+
+        if (!\is_array($flash)) {
+            $flash = [];
+        }
+
+        if (!\array_key_exists(self::$id, $flash)) {
+            $flash[self::$id] = [];
+        }
+
+        $flash[self::$id][$key] = true;
+        self::set('_flash', $flash);
     }
 
     public static function has(string $key): bool
     {
-        return array_key_exists($key, $_SESSION);
+        return \array_key_exists($key, $_SESSION);
     }
 
     public static function destroyFlash(): void
     {
-        $flash = static::get('_flash', []);
+        $flash = self::get('_flash', []);
 
-        $oldFlash = array_filter($flash, fn ($key) => $key !== static::$id, ARRAY_FILTER_USE_KEY);
+        if (!\is_array($flash)) {
+            $flash = [];
+        }
+
+        $oldFlash = \array_filter($flash, fn ($key) => $key !== self::$id, ARRAY_FILTER_USE_KEY);
         foreach ($oldFlash as $sessions) {
             foreach (\array_keys($sessions) as $sessionKey) {
-                static::delete($sessionKey);
+                self::delete(\strval($sessionKey));
             }
         }
 
-        $flash = array_filter($flash, fn ($key) => $key === static::$id, ARRAY_FILTER_USE_KEY);
+        $flash = \array_filter($flash, fn ($key) => $key === self::$id, ARRAY_FILTER_USE_KEY);
         static::set('_flash', $flash);
     }
 }
