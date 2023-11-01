@@ -127,7 +127,7 @@ abstract class Framework
             $password,
         );
 
-        Database\DB::get($dbConfig);
+        Database\DB::init($dbConfig);
     }
 
     private function setupWhoops(): void

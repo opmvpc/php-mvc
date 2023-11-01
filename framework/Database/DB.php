@@ -28,17 +28,21 @@ class DB
     /**
      * Get an instance of this class or creates it if it doesn't exist.
      */
-    public static function get(null|DBConfig $dbConfig = null): DB
+    public static function get(): DB
     {
         if (null === self::$instance) {
-            if (null === $dbConfig) {
-                throw new \Exception('DBConfig is required');
-            }
-
-            self::$instance = new DB($dbConfig);
+            throw new \Exception('Database connection not initialized, call DB::init() first');
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Initialize the database connection.
+     */
+    public static function init(DBConfig $dbConfig): void
+    {
+        self::$instance = new DB($dbConfig);
     }
 
     /**
