@@ -31,7 +31,6 @@ abstract class Framework
     {
         $this->setBasePath();
         $this->loadConfig();
-        $this->setupDB();
 
         // Start session if we are not in CLI mode
         if ('cli' !== \php_sapi_name()) {
@@ -96,6 +95,41 @@ abstract class Framework
         return $this->basePath;
     }
 
+    public function setupDB(): void
+    {
+        $host = $this->config('db.host') ?? 'localhost';
+        $port = $this->config('db.port') ?? '3306';
+        $user = $this->config('db.user') ?? 'root';
+        $password = $this->config('db.password') ?? '';
+        $database = $this->config('db.database') ?? 'microvel';
+
+        if (!\is_string($host)) {
+            throw new \Exception('DB host is not a string');
+        }
+        if (!\is_string($port)) {
+            throw new \Exception('DB port is not an string');
+        }
+        if (!\is_string($user)) {
+            throw new \Exception('DB user is not a string');
+        }
+        if (!\is_string($password)) {
+            throw new \Exception('DB password is not a string');
+        }
+        if (!\is_string($database)) {
+            throw new \Exception('DB database is not a string');
+        }
+
+        $dbConfig = new Database\DBConfig(
+            $host,
+            $port,
+            $database,
+            $user,
+            $password,
+        );
+
+        Database\DB::get($dbConfig);
+    }
+
     private function setupWhoops(): void
     {
         $run = new Run();
@@ -144,40 +178,5 @@ abstract class Framework
         }
 
         $this->basePath = $basePath;
-    }
-
-    private function setupDB(): void
-    {
-        $host = $this->config('db.host') ?? 'localhost';
-        $port = $this->config('db.port') ?? '3306';
-        $user = $this->config('db.user') ?? 'root';
-        $password = $this->config('db.password') ?? '';
-        $database = $this->config('db.database') ?? 'microvel';
-
-        if (!\is_string($host)) {
-            throw new \Exception('DB host is not a string');
-        }
-        if (!\is_string($port)) {
-            throw new \Exception('DB port is not an string');
-        }
-        if (!\is_string($user)) {
-            throw new \Exception('DB user is not a string');
-        }
-        if (!\is_string($password)) {
-            throw new \Exception('DB password is not a string');
-        }
-        if (!\is_string($database)) {
-            throw new \Exception('DB database is not a string');
-        }
-
-        $dbConfig = new Database\DBConfig(
-            $host,
-            $port,
-            $database,
-            $user,
-            $password,
-        );
-
-        Database\DB::get($dbConfig);
     }
 }

@@ -14,4 +14,10 @@ class App extends Framework
         $registerRoutes = require_once __DIR__.'/routes.php';
         $registerRoutes($this->router());
     }
+
+    public function run(): void
+    {
+        $this->setupDB();
+        parent::run();
+    }
 }
