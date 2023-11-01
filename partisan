@@ -1,0 +1,49 @@
+#!/usr/bin/php
+
+<?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+require __DIR__.'/vendor/autoload.php';
+
+use App\App;
+use Database\MigrationsManager;
+use Database\SeedersManager;
+
+/*
+ * Available commands:
+ *   - php partisan migrate
+ *   - php partisan migrate:fresh
+ *   - php partisan migrate:fresh --seed
+ */
+
+$app = App::get();
+
+// get the command name
+$command = $argv[1];
+
+// get the command arguments
+$arguments = array_slice($argv, 2);
+
+// run the command
+$migrationsManager = new MigrationsManager();
+if ('migrate' === $command) {
+    echo 'Migrating...'.PHP_EOL;
+    $migrationsManager->migrate();
+    echo 'Done'.PHP_EOL;
+} elseif ('migrate:fresh' === $command && 0 === count($arguments)) {
+    echo 'Refreshing database...'.PHP_EOL;
+    $migrationsManager->fresh();
+    echo 'Done'.PHP_EOL;
+} elseif ('migrate:fresh' === $command && '--seed' === $arguments[0]) {
+    echo 'Refreshing database...'.PHP_EOL;
+    $migrationsManager->fresh();
+    echo 'Done'.PHP_EOL;
+    echo 'Seeding...'.PHP_EOL;
+    $seedersManager = new SeedersManager();
+    $seedersManager->seed();
+    echo 'Done'.PHP_EOL;
+} else {
+    echo PHP_EOL.'Error: Command not found'.PHP_EOL;
+}

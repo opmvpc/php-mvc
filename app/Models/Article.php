@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-class Article
+use Framework\Database\Repository\AbstractModel;
+
+class Article extends AbstractModel
 {
     public function __construct(
         private int $id,

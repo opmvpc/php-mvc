@@ -31,8 +31,12 @@ abstract class Framework
     {
         $this->setBasePath();
         $this->loadConfig();
+        $this->setupDB();
 
-        Session::start();
+        // Start session if we are not in CLI mode
+        if ('cli' !== \php_sapi_name()) {
+            Session::start();
+        }
 
         if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
             $this->setupWhoops();
@@ -140,5 +144,17 @@ abstract class Framework
         }
 
         $this->basePath = $basePath;
+    }
+
+    private function setupDB(): void
+    {
+        $dbConfig = new Database\DBConfig(
+            $this->config('db.host'),
+            $this->config('db.database'),
+            $this->config('db.user'),
+            $this->config('db.password'),
+        );
+
+        Database\DB::get($dbConfig);
     }
 }
