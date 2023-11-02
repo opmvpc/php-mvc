@@ -111,7 +111,7 @@ class Route
 
             $csrfToken = $post['_csrf_token'] ?? $json['_csrf_token'] ?? '';
 
-            Csrf::validate(\strval($csrfToken));
+            Csrf::validate($csrfToken);
         }
 
         $res = null;
@@ -154,6 +154,8 @@ class Route
         if (false !== $json) {
             return new JsonResponse($res);
         }
+
+        Session::delete('_csrf_token');
 
         throw new ServerError('Unable to encode response');
     }
@@ -225,6 +227,7 @@ class Route
         \preg_match_all("#{$pattern}#", $this->normalizePath($path), $matches);
 
         // si la regex à matché, on check si la méthode est la bonne
+        // dd($matches, $this->method, $method, $path, $this->path);
         if (count($matches[0]) > 0 && $this->method !== $method) {
             throw new MethodNotAllowedException();
         }

@@ -27,7 +27,7 @@ class ArticleController extends BaseController
 
     public function show(Context $context): View
     {
-        $id = $context->routeParams('articleId');
+        $id = $context->routeParam('articleId');
         $article = Article::findOrFail($id);
 
         return new View('articles/show', ['article' => $article]);
@@ -53,7 +53,26 @@ class ArticleController extends BaseController
             ],
         ]))->validate($context->postParams());
 
-        // dd($validated);
+        if (!is_string($validated['title']) || !is_string($validated['content'])) {
+            throw new \Exception('Article title and content must be strings');
+        }
+
+        $article = new Article(
+            id: null,
+            title: $validated['title'],
+            content: $validated['content'],
+        );
+
+        $article->save();
+
+        return Router::redirect('/articles');
+    }
+
+    public function destroy(Context $context): Response
+    {
+        $id = $context->routeParam('articleId');
+        $article = Article::findOrFail($id);
+        $article->delete();
 
         return Router::redirect('/articles');
     }

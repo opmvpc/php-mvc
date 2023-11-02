@@ -16,8 +16,12 @@ class Csrf
         return $token;
     }
 
-    public static function validate(string $token): bool
+    public static function validate(mixed $token): bool
     {
+        if (!\is_string($token)) {
+            throw new \Exception('CSRF token must be a string');
+        }
+
         $sessionToken = Session::get('_csrf_token', '');
 
         if (!is_string($sessionToken)) {
@@ -27,8 +31,6 @@ class Csrf
         if (false === \hash_equals($sessionToken, $token)) {
             throw new \Exception('CSRF token mismatch');
         }
-
-        Session::delete('_csrf_token');
 
         return true;
     }

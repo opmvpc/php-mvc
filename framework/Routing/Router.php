@@ -112,8 +112,9 @@ class Router
      * Generate an URL from a route name.
      *
      * @param array<string, string> $params
+     * @param array<string, string> $getParams
      */
-    public function route(string $name, array $params = []): string
+    public function route(string $name, array $params = [], array $getParams = []): string
     {
         foreach ($this->routes as $route) {
             if ($route->name() === $name) {
@@ -121,7 +122,7 @@ class Router
                 $replaces = [];
 
                 foreach ($params as $key => $value) {
-                    $finds[] = "{{$value}}";
+                    $finds[] = "{{$key}}";
                     $replaces[] = $value;
 
                     $finds[] = "{{$key}?}";
@@ -136,6 +137,11 @@ class Router
                 // throw an exception if there are still params
                 if (null === $path || str_contains($path, '{')) {
                     throw new \Exception("Route {$name} has missing params");
+                }
+
+                // add get params
+                if (!empty($getParams)) {
+                    $path .= '?'.http_build_query($getParams);
                 }
 
                 return $path;

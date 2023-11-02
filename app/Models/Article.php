@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Framework\Database\DB;
 use Framework\Database\Repository\AbstractModel;
 
 class Article extends AbstractModel
 {
     public function __construct(
-        private int $id,
+        private null|int $id,
         private string $title,
         private string $content,
     ) {}
 
-    public function id(): int
+    public function id(): null|int
     {
         return $this->id;
     }
@@ -29,7 +30,7 @@ class Article extends AbstractModel
         return $this->content;
     }
 
-    public static function findOrFail(mixed $id): ?Article
+    public static function findOrFail(mixed $id): Article
     {
         if (null === $id) {
             throw new \Exception('Article id is required');
@@ -43,10 +44,21 @@ class Article extends AbstractModel
             throw new \Exception('Article id must be an integer');
         }
 
-        foreach (static::articles() as $article) {
-            if ($article->id() === $id) {
-                return $article;
+        $article = DB::query(
+            <<<'SQL'
+            SELECT id, title, content
+            FROM articles
+            WHERE id = :id
+            SQL,
+            ['id' => $id]
+        )->fetch();
+
+        if (null !== $article) {
+            if (!\is_array($article)) {
+                throw new \Exception('Article must be an array');
             }
+
+            return self::fromRow($article);
         }
 
         throw new \Exception('Article not found');
@@ -57,33 +69,110 @@ class Article extends AbstractModel
      */
     public static function all(): array
     {
-        return static::articles();
+        $articles = DB::query(
+            <<<'SQL'
+            SELECT id, title, content
+            FROM articles
+            SQL
+        )->fetchAll();
+
+        return \array_map(
+            fn (array $article): Article => self::fromRow($article),
+            $articles
+        );
     }
 
     /**
-     * @return array<Article>
+     * @return array<string, mixed>
      */
-    public static function articles(): array
+    public function toArray(): array
     {
         return [
-            new Article(
-                1,
-                'Article 1',
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae l
-                ectus nisl. Nulla facilisi. Nullam euismod, nisl eget aliquam aliquet,
-                nunc nisl aliquet nunc, vitae aliquam nisl nunc vitae nisl. Nulla facil
-                isi. Nullam euismod, nisl eget aliquam aliquet, nunc nisl aliquet nunc,
-                vitae aliquam nisl nunc vitae nisl.'
-            ),
-            new Article(
-                2,
-                'Article 2',
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae l
-                ectus nisl. Nulla facilisi. Nullam euismod, nisl eget aliquam aliquet,
-                nunc nisl aliquet nunc, vitae aliquam nisl nunc vitae nisl. Nulla facil
-                isi. Nullam euismod, nisl eget aliquam aliquet, nunc nisl aliquet nunc,
-                vitae aliquam nisl nunc vitae nisl.'
-            ),
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
         ];
+    }
+
+    public function save(): Article
+    {
+        if (null === $this->id) {
+            $this->id = $this->insert();
+        } else {
+            $this->update();
+        }
+
+        return $this;
+    }
+
+    public function delete(): void
+    {
+        if (null === $this->id) {
+            throw new \Exception('Article id is required');
+        }
+
+        DB::query(
+            <<<'SQL'
+            DELETE FROM articles
+            WHERE id = :id
+            SQL,
+            ['id' => $this->id]
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private static function fromRow(array $row): Article
+    {
+        if (!\is_int($row['id'])) {
+            throw new \Exception('Article id must be an integer');
+        }
+
+        if (!\is_string($row['title'])) {
+            throw new \Exception('Article title must be a string');
+        }
+
+        if (!\is_string($row['content'])) {
+            throw new \Exception('Article content must be a string');
+        }
+
+        return new Article(
+            $row['id'],
+            $row['title'],
+            $row['content'],
+        );
+    }
+
+    private function insert(): int
+    {
+        DB::query(
+            <<<'SQL'
+            INSERT INTO articles (title, content)
+            VALUES (:title, :content)
+            SQL,
+            [
+                'title' => $this->title,
+                'content' => $this->content,
+            ]
+        );
+
+        return DB::lastInsertId();
+    }
+
+    private function update(): void
+    {
+        DB::query(
+            <<<'SQL'
+            UPDATE articles
+            SET title = :title, content = :content
+            WHERE id = :id
+            SQL,
+            [
+                'id' => $this->id,
+                'title' => $this->title,
+                'content' => $this->content,
+            ]
+        );
     }
 }

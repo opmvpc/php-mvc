@@ -23,7 +23,9 @@ class Validator
     }
 
     /**
-     * @return array<string, list<string>>
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
      */
     public function validate(mixed $data): array
     {
@@ -49,6 +51,6 @@ class Validator
             throw new ValidationException($errors, $data);
         }
 
-        return \array_intersect_key($data, $errors);
+        return \array_intersect_key($data, $this->rules);
     }
 }

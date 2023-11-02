@@ -73,8 +73,10 @@ class DB
     /**
      * Get last inserted id.
      */
-    public function lastInsertId(): int
+    public static function lastInsertId(): int
     {
-        return \intval($this->pdo->lastInsertId());
+        $db = self::get();
+
+        return \intval($db->pdo->lastInsertId());
     }
 }

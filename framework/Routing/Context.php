@@ -45,13 +45,17 @@ class Context
         return $this->request;
     }
 
-    public function queryParams(null|string $key = null): mixed
+    public function queryParam(string $key): mixed
     {
-        if (null === $key) {
-            return $this->queryParams;
-        }
-
         return $this->queryParams[$key] ?? throw new \Exception('Query param not found');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function queryParams(): array
+    {
+        return $this->queryParams;
     }
 
     /**
@@ -62,22 +66,34 @@ class Context
         return $this->jsonParams;
     }
 
-    public function postParams(null|string $key = null): mixed
+    public function postParam(string $key): mixed
     {
-        if (null === $key) {
-            return $this->postParams;
-        }
-
         return $this->postParams[$key] ?? throw new \Exception('Post param not found');
     }
 
-    public function routeParams(null|string $key = null): mixed
+    /**
+     * @return array<string, mixed>
+     */
+    public function postParams(): array
     {
-        if (null === $key) {
-            return $this->route->params();
+        return $this->postParams;
+    }
+
+    public function routeParam(string $key): mixed
+    {
+        if (!isset($this->route->params()[$key])) {
+            throw new \Exception('Route param not found');
         }
 
-        return $this->route->params()[$key] ?? throw new \Exception('Route param not found');
+        return $this->route->params()[$key];
+    }
+
+    /**
+     * @return array<string, null|string>
+     */
+    public function routeParams(): array
+    {
+        return $this->route->params();
     }
 
     /**
