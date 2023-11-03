@@ -151,7 +151,6 @@ class PhpEngine implements EngineInterface
     protected function csrf(): void
     {
         $token = Csrf::token();
-        echo "TOKEN: {$token}";
         echo <<<HTML
         <input type="hidden" name="_csrf_token" value="{$token}">
         HTML;

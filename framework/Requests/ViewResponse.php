@@ -16,6 +16,9 @@ class ViewResponse extends Response
             [
                 'Content-Type' => 'text/html',
                 'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'X-Frame-Options' => 'SAMEORIGIN',
+                'Access-Control-Allow-Origin' => 'SAMEORIGIN',
+                'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
             ]
         );
     }

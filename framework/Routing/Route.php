@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Framework\Routing;
 
+use App\Http\Middleware\MiddlewaresManager;
 use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\ServerError;
 use Framework\Exceptions\ValidationException;
@@ -26,6 +27,11 @@ class Route
     protected ?string $name;
 
     /**
+     * @var array<string>
+     */
+    protected array $middlewares;
+
+    /**
      * @var callable|list{0: class-string, 1: callable-string}
      */
     protected mixed $action;
@@ -45,6 +51,7 @@ class Route
         $this->action = $action;
         $this->params = [];
         $this->name = null;
+        $this->middlewares = [];
     }
 
     /**
@@ -100,20 +107,19 @@ class Route
     public function run(RequestInterface $request): MessageInterface
     {
         $context = new Context($this, $request);
+        $routeMiddlewares = $this->middlewares;
+        $middlewareManager = new MiddlewaresManager();
+        $context = $middlewareManager->handle($context, $routeMiddlewares);
 
-        if (HttpVerb::GET !== $request->getMethod()) {
-            $post = $context->postParams();
-            $json = $context->jsonParams();
-
-            if (!is_array($post)) {
-                throw new ServerError('Unable to parse request body');
-            }
-
-            $csrfToken = $post['_csrf_token'] ?? $json['_csrf_token'] ?? '';
-
-            Csrf::validate($csrfToken);
+        if ($context instanceof MessageInterface) {
+            return $context;
         }
 
+        return $this->getResponse($context);
+    }
+
+    public function getResponse(Context $context): MessageInterface
+    {
         $res = null;
 
         try {
@@ -126,7 +132,7 @@ class Route
             }
         } catch (ValidationException $exception) {
             // check if the request is an ajax request
-            if ($request->isJson()) {
+            if ($context->request()->isJson()) {
                 return new JsonResponse($exception->errorBag(), 422);
             }
 
@@ -154,8 +160,6 @@ class Route
         if (false !== $json) {
             return new JsonResponse($res);
         }
-
-        Session::delete('_csrf_token');
 
         throw new ServerError('Unable to encode response');
     }
@@ -274,6 +278,16 @@ class Route
     public function withName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function withMiddlewares(array $middlewares): self
+    {
+        $this->middlewares = $middlewares;
 
         return $this;
     }

@@ -6,6 +6,7 @@ namespace Framework\Routing;
 
 use Framework\Exceptions\NotFoundException;
 use Framework\Requests\MessageInterface;
+use Framework\Requests\Redirect;
 use Framework\Requests\Request;
 use Framework\Requests\Response;
 use Framework\Requests\ResponseInterface;
@@ -122,7 +123,7 @@ class Router
             // do nothing
         }
 
-        return new Response('', 302, ['Location' => $path]);
+        return new Redirect($path);
     }
 
     /**

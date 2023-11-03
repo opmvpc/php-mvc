@@ -20,5 +20,5 @@ return $registerWebRoutes = function (Router $router) {
 
     $router->get('/error', fn () => throw new Exception('Error'));
 
-    $router->get('/admin/dashboard', [DashboardController::class, 'index'])->withName('admin.dashboard');
+    $router->get('/admin/dashboard', [DashboardController::class, 'index'])->withName('admin.dashboard')->withMiddlewares(['auth']);
 };

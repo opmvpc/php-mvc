@@ -55,7 +55,7 @@ class Article extends AbstractModel
 
         if (null !== $article) {
             if (!\is_array($article)) {
-                throw new \Exception('Article must be an array');
+                throw new \Exception('Article not found');
             }
 
             return self::fromRow($article);
