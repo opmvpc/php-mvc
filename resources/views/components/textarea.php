@@ -4,6 +4,8 @@ $name = $data['name'] ?? '';
 $id = $data['id'] ?? $name;
 $cols = $data['cols'] ?? '';
 $rows = $data['rows'] ?? '';
+$value = $this->old($name, $data['value'] ?? '');
+
 ?>
 
-<textarea class="<?php echo \implode(' ', $class); ?>" name="<?php echo $name; ?>" id="<?php echo $id; ?>" cols="<?php echo $cols; ?>" rows="<?php echo $rows; ?>"></textarea>
+<textarea class="<?php echo \implode(' ', $class); ?>" name="<?php echo $name; ?>" id="<?php echo $id; ?>" cols="<?php echo $cols; ?>" rows="<?php echo $rows; ?>" ><?php echo $value; ?></textarea>

@@ -283,7 +283,7 @@ class Route
     }
 
     /**
-     * @return array<string>
+     * @param array<string> $middlewares
      */
     public function withMiddlewares(array $middlewares): self
     {
