@@ -4,7 +4,7 @@
     Créer un article
 </h1>
 
-<form action="<?php echo $this->route('articles.store'); ?>?test=coucou" method="post" class="flex flex-col space-y-4">
+<form action="<?php echo $this->route('articles.store'); ?>" method="post" class="flex flex-col space-y-4">
     <?php $this->csrf(); ?>
     <div class="flex flex-col space-y-1">
         <?php $this->includes('components/label', [

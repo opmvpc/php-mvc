@@ -16,4 +16,6 @@ return [
     'file' => 'The :field field must be a valid file',
     'image' => 'The :field field must be a valid image',
     'in' => 'The :field field must be one of the following values: :values',
+    'unique' => 'The :field field already exists',
+    'password_confirmation' => 'Password confirmation does not match',
 ];

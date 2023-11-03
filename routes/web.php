@@ -6,7 +6,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\HomeController;
 use Framework\Routing\Router;
 
-return $registerRoutes = function (Router $router) {
+return $registerWebRoutes = function (Router $router) {
     $router->get('/', [HomeController::class, 'index'])
         ->withName('home')
     ;

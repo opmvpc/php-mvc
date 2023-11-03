@@ -18,20 +18,34 @@ describe('Router Tests', function () {
         $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
         $registerRoutes($this->router);
 
-        expect($this->router->routes()['/']->method())->toBe(HttpVerb::GET);
-        expect($this->router->routes()['/']->action())->toBeArray();
-        expect($this->router->routes()['/articles']->method())->toBe(HttpVerb::GET);
-        expect($this->router->routes()['/articles']->action())->toBeInstanceOf(Closure::class);
-        expect($this->router->routes()['/error']->method())->toBe(HttpVerb::GET);
-        expect($this->router->routes()['/error']->action())->toBeInstanceOf(Closure::class);
-        expect($this->router->routes()['/post']->method())->toBe(HttpVerb::POST);
-        expect($this->router->routes()['/post']->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(5);
+
+        expect($this->router->routes()[0]->path())->toBe('/');
+        expect($this->router->routes()[0]->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()[0]->action())->toBeArray();
+
+        expect($this->router->routes()[1]->path())->toBe('/articles');
+        expect($this->router->routes()[1]->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()[1]->action())->toBeInstanceOf(Closure::class);
+
+        expect($this->router->routes()[2]->path())->toBe('/articles/{id?}');
+        expect($this->router->routes()[2]->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()[2]->action())->toBeInstanceOf(Closure::class);
+
+        expect($this->router->routes()[3]->path())->toBe('/error');
+        expect($this->router->routes()[3]->method())->toBe(HttpVerb::GET);
+        expect($this->router->routes()[3]->action())->toBeInstanceOf(Closure::class);
+
+        expect($this->router->routes()[4]->path())->toBe('/post');
+        expect($this->router->routes()[4]->method())->toBe(HttpVerb::POST);
+        expect($this->router->routes()[4]->action())->toBeInstanceOf(Closure::class);
     });
 
     it('should register a POST route', function (string $uri, Closure $action) {
         $this->router->post($uri, $action);
-        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::POST);
-        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[0]->method())->toBe(HttpVerb::POST);
+        expect($this->router->routes()[0]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/post', fn () => 'post',
@@ -43,8 +57,8 @@ describe('Router Tests', function () {
 
     it('should register a PUT route', function (string $uri, Closure $action) {
         $this->router->put($uri, $action);
-        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::PUT);
-        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[0]->method())->toBe(HttpVerb::PUT);
+        expect($this->router->routes()[0]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/put', fn () => 'put',
@@ -56,8 +70,8 @@ describe('Router Tests', function () {
 
     it('should register a DELETE route', function (string $uri, Closure $action) {
         $this->router->delete($uri, $action);
-        expect($this->router->routes()[$uri]->method())->toBe(HttpVerb::DELETE);
-        expect($this->router->routes()[$uri]->action())->toBeInstanceOf(Closure::class);
+        expect($this->router->routes()[0]->method())->toBe(HttpVerb::DELETE);
+        expect($this->router->routes()[0]->action())->toBeInstanceOf(Closure::class);
     })->with([
         [
             '/delete', fn () => 'delete',

@@ -171,7 +171,8 @@ abstract class Framework
 
     private function setBasePath(): void
     {
-        $basePath = \realpath(__DIR__.'/../');
+        $separator = \DIRECTORY_SEPARATOR;
+        $basePath = \realpath(__DIR__.$separator.'..'.$separator);
 
         if (false === $basePath) {
             throw new \Exception('Base path not found');

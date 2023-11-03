@@ -34,7 +34,6 @@ describe('Route generation', function () {
     ]);
 
     it('should generate a route with parameters and multiple routes registered', function (array $routes) {
-        dump($routes);
         foreach ($routes as $route) {
             $this->router->get($route[0], $route[2])->withName($route[1]);
         }

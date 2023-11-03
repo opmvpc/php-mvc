@@ -13,7 +13,7 @@ use Framework\Requests\ResponseInterface;
 class Router
 {
     /**
-     * @var array<string, Route>
+     * @var array<Route>
      */
     protected array $routes;
 
@@ -32,7 +32,7 @@ class Router
      */
     public function add(string $path, HttpVerb $method, mixed $action): Route
     {
-        return $this->routes[$path] = Route::add($path, $method, $action);
+        return $this->routes[] = Route::add($path, $method, $action);
     }
 
     /**
@@ -42,7 +42,7 @@ class Router
      */
     public function get(string $path, mixed $action): Route
     {
-        return $this->routes[$path] = Route::get($path, $action);
+        return $this->routes[] = Route::get($path, $action);
     }
 
     /**
@@ -52,7 +52,7 @@ class Router
      */
     public function post(string $path, mixed $action): Route
     {
-        return $this->routes[$path] = Route::post($path, $action);
+        return $this->routes[] = Route::post($path, $action);
     }
 
     /**
@@ -62,7 +62,7 @@ class Router
      */
     public function put(string $path, mixed $action): Route
     {
-        return $this->routes[$path] = Route::put($path, $action);
+        return $this->routes[] = Route::put($path, $action);
     }
 
     /**
@@ -72,7 +72,7 @@ class Router
      */
     public function delete(string $path, mixed $action): Route
     {
-        return $this->routes[$path] = Route::delete($path, $action);
+        return $this->routes[] = Route::delete($path, $action);
     }
 
     /**

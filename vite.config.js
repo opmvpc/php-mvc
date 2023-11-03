@@ -8,7 +8,14 @@ export default defineConfig({
     watch: {
       paths: ["resources/views/**/*.php", "app/**/*.php"],
       depth: 99,
-      usePolling: true,
+      usePolling: false,
+      interval: 100,
+      binaryInterval: 300,
+      alwaysStat: false,
+      awaitWriteFinish: {
+        stabilityThreshold: 2000,
+        pollInterval: 100,
+      },
     },
   },
   build: {

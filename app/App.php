@@ -10,9 +10,11 @@ class App extends Framework
 {
     public function registerRoutes(): void
     {
-        // routes registering
-        $registerRoutes = require_once __DIR__.'/routes.php';
-        $registerRoutes($this->router());
+        $registerWebRoutes = require_once $this->basePath().'/routes/web.php';
+        $registerWebRoutes($this->router());
+
+        $registerAuthRoutes = require_once $this->basePath().'/routes/auth.php';
+        $registerAuthRoutes($this->router());
     }
 
     public function run(): void

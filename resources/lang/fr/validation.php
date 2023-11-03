@@ -13,4 +13,6 @@ return [
     'in' => 'Le champ :field doit être une des valeurs suivantes: :values',
     'file' => 'Le champ :field doit être un fichier valide',
     'image' => 'Le champ :field doit être une image valide',
+    'unique' => 'Le champ :field existe déjà',
+    'password_confirmation' => 'La confirmation du mot de passe ne correspond pas',
 ];
