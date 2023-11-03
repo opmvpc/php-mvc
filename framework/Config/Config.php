@@ -8,6 +8,10 @@ use Framework\Database\DBConfig;
 class Config
 {
     private string $basePath;
+
+    /**
+     * @var array<string, mixed>
+     */
     private array $config;
 
     public function __construct(string $basePath)

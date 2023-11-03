@@ -18,7 +18,7 @@ class Csrf
         Session::set('_csrf_token', $this->token);
     }
 
-    public static function token(): string
+    public static function token(): null|string
     {
         if (\is_null(self::$instance)) {
             self::$instance = new Csrf();
@@ -27,7 +27,7 @@ class Csrf
         return self::$instance->getToken();
     }
 
-    public function getToken(): string
+    public function getToken(): null|string
     {
         return $this->token;
     }
