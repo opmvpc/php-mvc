@@ -4,7 +4,7 @@ use Framework\Routing\Router;
 
 describe('Route generation', function () {
     beforeEach(function () {
-        $this->router = new Router();
+        $this->router = Router::getInstance();
     });
 
     afterEach(function () {

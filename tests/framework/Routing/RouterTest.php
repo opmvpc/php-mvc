@@ -6,10 +6,11 @@ use Framework\Routing\HttpVerb;
 use Framework\Routing\Router;
 
 beforeEach(function () {
-    $this->router = new Router();
+    $this->router = Router::getInstance();
 });
 
 afterEach(function () {
+    $this->router->__destruct();
     unset($this->router);
 });
 

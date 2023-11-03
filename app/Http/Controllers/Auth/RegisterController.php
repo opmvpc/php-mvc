@@ -49,7 +49,7 @@ class RegisterController extends BaseController
             ],
         ]))->validate($context->postParams());
 
-        if (!is_string($validated['name']) || !is_string($validated['email']) || !is_string($validated['password'])) {
+        if (!\is_string($validated['name']) || !\is_string($validated['email']) || !\is_string($validated['password']) || !\is_string($validated['password_confirmation'])) {
             throw new \Exception('User name, email and password must be strings');
         }
 

@@ -122,7 +122,7 @@ class Authenticatable extends AbstractModel
     }
 
     /**
-     * @return array<User>
+     * @return array<Authenticatable>
      */
     public static function all(): array
     {

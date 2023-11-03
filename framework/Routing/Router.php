@@ -17,7 +17,7 @@ class Router
      */
     protected array $routes;
 
-    protected static Router $instance;
+    protected static null|Router $instance = null;
 
     protected ?Route $current;
 
@@ -27,9 +27,14 @@ class Router
         $this->current = null;
     }
 
+    public function __destruct()
+    {
+        self::$instance = null;
+    }
+
     public static function getInstance(): Router
     {
-        if (!isset(self::$instance)) {
+        if (null === self::$instance) {
             self::$instance = new Router();
         }
 

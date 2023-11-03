@@ -37,7 +37,7 @@ class Auth
 
         $user->setPassword('');
 
-        Session::set('user', $user);
+        Session::set('_user', $user);
 
         return true;
     }
@@ -60,7 +60,7 @@ class Auth
             password: password_hash($password, PASSWORD_DEFAULT),
         );
 
-        Session::set('user', $user);
+        Session::set('_user', $user);
 
         $user->save();
 
@@ -69,12 +69,18 @@ class Auth
 
     public static function logout(): void
     {
-        Session::delete('user');
+        Session::delete('_user');
     }
 
     public static function user(): ?Authenticatable
     {
-        return Session::get('user');
+        $user = Session::get('_user');
+
+        if ($user instanceof Authenticatable) {
+            return $user;
+        }
+
+        throw new \Exception('No authenticated user');
     }
 
     public static function check(): bool
