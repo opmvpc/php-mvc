@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
-use App\Models\User;
-use Framework\Exceptions\ValidationException;
+use Framework\Auth\Auth;
 use Framework\Requests\Response;
 use Framework\Routing\Context;
 use Framework\Routing\Router;
-use Framework\Support\Str;
+use Framework\Validator\Rules\Email;
 use Framework\Validator\Rules\Max;
 use Framework\Validator\Rules\Min;
 use Framework\Validator\Rules\Required;
@@ -33,6 +32,7 @@ class RegisterController extends BaseController
             ],
             'email' => [
                 new Required(),
+                new Email(),
                 new Unique('users'),
                 new Min(3),
                 new Max(100),
@@ -53,24 +53,14 @@ class RegisterController extends BaseController
             throw new \Exception('User name, email and password must be strings');
         }
 
-        if ($validated['password'] !== $validated['password_confirmation']) {
-            throw new ValidationException(
-                [
-                    'password_confirmation' => [Str::translate('validation.password_confirmation')],
-                ],
-                $context->postParams()
-            );
-        }
-
-        $user = new User(
-            id: null,
+        Auth::register(
             name: $validated['name'],
             email: $validated['email'],
             password: $validated['password'],
+            password_confirmation: $validated['password_confirmation'],
+            context: $context,
         );
 
-        $user->save();
-
-        return Router::redirect('/login');
+        return Router::redirect('admin.dashboard');
     }
 }

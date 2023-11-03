@@ -1,4 +1,4 @@
-<?php $this->extends('layouts/guest'); ?>
+<?php $this->extends('layouts/guest/app'); ?>
 
 <h1>
     <?php echo $article->title(); ?>

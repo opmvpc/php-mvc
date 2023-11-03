@@ -32,7 +32,8 @@
       "@pest"
     ],
     "phpstan": "phpstan analyse -c phpstan.neon --memory-limit 1G",
-    "pest": "pest --parallel --display-warnings --display-notices --display-errors --stop-on-failure"
+    "pest": "pest --parallel --display-warnings --display-notices --display-errors --stop-on-failure",
+    "loc": "@php phploc-7.0.2.phar app/ database/ framework/ resources/ routes/ tests/"
   },
   "require": {
     "vlucas/phpdotenv": "^5.5",

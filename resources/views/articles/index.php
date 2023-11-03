@@ -1,7 +1,7 @@
 <?php
 use Framework\Support\Str;
 
-$this->extends('layouts/guest');
+$this->extends('layouts/guest/app');
 
 ?>
 

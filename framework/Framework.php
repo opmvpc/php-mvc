@@ -34,7 +34,11 @@ abstract class Framework
 
         // Start session if we are not in CLI mode
         if ('cli' !== \php_sapi_name()) {
-            Session::start();
+            $lifetime = $this->config('session.lifetime');
+            if (!\is_int($lifetime)) {
+                throw new \Exception('Session lifetime must be an integer');
+            }
+            Session::start($lifetime);
         }
 
         if ('production' !== $this->config('app.env') && $this->config('app.debug')) {
@@ -47,7 +51,7 @@ abstract class Framework
     public function router(): Router
     {
         if (!isset($this->router)) {
-            $this->router = new Router();
+            $this->router = Router::getInstance();
             $this->registerRoutes();
         }
 
@@ -165,6 +169,9 @@ abstract class Framework
                 'user' => $_ENV['DB_USER'] ?? 'root',
                 'password' => $_ENV['DB_PASSWORD'] ?? '',
                 'database' => $_ENV['DB_DATABASE'] ?? 'php-mvc-framework',
+            ],
+            'session' => [
+                'lifetime' => $_ENV['SESSION_LIFETIME'] ?? 180,
             ],
         ];
     }

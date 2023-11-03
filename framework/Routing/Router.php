@@ -17,12 +17,23 @@ class Router
      */
     protected array $routes;
 
+    protected static Router $instance;
+
     protected ?Route $current;
 
-    public function __construct()
+    private function __construct()
     {
         $this->routes = [];
         $this->current = null;
+    }
+
+    public static function getInstance(): Router
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new Router();
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -97,6 +108,15 @@ class Router
 
     public static function redirect(string $path): Response
     {
+        // try with named routes first
+        $router = self::getInstance();
+
+        try {
+            $path = $router->route($path);
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
         return new Response('', 302, ['Location' => $path]);
     }
 

@@ -8,7 +8,7 @@
 </head>
 <body class="min-h-screen bg-blue-950">
     <header>
-        <?php $this->includes('layouts/nav'); ?>
+        <?php $this->includes('layouts/guest/nav'); ?>
     </header>
     <main class="my-16 p-4 mx-auto container bg-blue-300 rounded-md prose prose-zinc">
         <?php echo $contents; ?>

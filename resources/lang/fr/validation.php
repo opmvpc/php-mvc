@@ -15,4 +15,6 @@ return [
     'image' => 'Le champ :field doit être une image valide',
     'unique' => 'Le champ :field existe déjà',
     'password_confirmation' => 'La confirmation du mot de passe ne correspond pas',
+    'wrong_email' => 'L\'adresse email ne correspond pas à nos enregistrements.',
+    'wrong_password' => 'Le mot de passe ne correspond pas à nos enregistrements.',
 ];

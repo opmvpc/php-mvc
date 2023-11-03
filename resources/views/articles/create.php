@@ -1,4 +1,4 @@
-<?php $this->extends('layouts/guest'); ?>
+<?php $this->extends('layouts/guest/app'); ?>
 
 <h1>
     Créer un article
@@ -35,7 +35,7 @@
         ]); ?>
     </div>
 
-    <div>
+    <div class="pt-4">
         <?php $this->includes('components/btn', [
             'text' => 'Créer',
         ]); ?>

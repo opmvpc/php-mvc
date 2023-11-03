@@ -12,4 +12,6 @@ return $registerAuthRoutes = function (Router $router) {
 
     $router->get('/register', [RegisterController::class, 'showRegisterForm'])->withName('auth.register.show');
     $router->post('/register/store', [RegisterController::class, 'register'])->withName('auth.register.store');
+
+    $router->post('/logout', [LoginController::class, 'logout'])->withName('auth.logout');
 };

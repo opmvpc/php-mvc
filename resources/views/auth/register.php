@@ -1,4 +1,4 @@
-<?php $this->extends('layouts/guest'); ?>
+<?php $this->extends('layouts/guest/app'); ?>
 
 <h1>
     Créer un compte
@@ -14,7 +14,6 @@
         <?php $this->includes('components/input', [
             'type' => 'text',
             'name' => 'name',
-            'id' => 'name',
             'value' => $this->old('name'),
         ]); ?>
         <?php $this->includes('components/input_error', [
@@ -30,7 +29,6 @@
         <?php $this->includes('components/input', [
             'type' => 'email',
             'name' => 'email',
-            'id' => 'email',
             'value' => $this->old('email'),
         ]); ?>
         <?php $this->includes('components/input_error', [
@@ -46,7 +44,6 @@
         <?php $this->includes('components/input', [
             'type' => 'password',
             'name' => 'password',
-            'id' => 'password',
             'value' => $this->old('password'),
         ]); ?>
         <?php $this->includes('components/input_error', [
@@ -62,7 +59,6 @@
         <?php $this->includes('components/input', [
             'type' => 'password',
             'name' => 'password_confirmation',
-            'id' => 'password_confirmation',
             'value' => $this->old('password_confirmation'),
         ]); ?>
         <?php $this->includes('components/input_error', [
@@ -70,9 +66,13 @@
         ]); ?>
     </div>
 
-    <div>
+    <div class="flex space-x-4 pt-4">
         <?php $this->includes('components/btn', [
             'text' => 'Créer',
         ]); ?>
+
+        <a href="<?php echo $this->route('auth.login.show'); ?>" class="btn btn-secondary">
+            Déjà inscrit ?
+        </a>
     </div>
 </form>

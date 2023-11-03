@@ -8,8 +8,11 @@ class Session
 {
     private static string $id;
 
-    public static function start(): void
+    public static function start(int $lifetime = 180): void
     {
+        \session_cache_limiter('private');
+        \session_cache_expire($lifetime);
+
         self::$id = Str::uuid();
         \session_start();
     }

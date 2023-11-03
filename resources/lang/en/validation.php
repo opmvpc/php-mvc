@@ -18,4 +18,6 @@ return [
     'in' => 'The :field field must be one of the following values: :values',
     'unique' => 'The :field field already exists',
     'password_confirmation' => 'Password confirmation does not match',
+    'wrong_email' => 'The email address does not match our records.',
+    'wrong_password' => 'The password does not match our records.',
 ];
