@@ -8,12 +8,28 @@ use Framework\Support\Session;
 
 class Csrf
 {
+    protected null|string $token;
+
+    protected static null|Csrf $instance = null;
+
+    private function __construct()
+    {
+        $this->token = \bin2hex(random_bytes(32));
+        Session::set('_csrf_token', $this->token);
+    }
+
     public static function token(): string
     {
-        $token = \bin2hex(random_bytes(32));
-        Session::set('_csrf_token', $token);
+        if (\is_null(self::$instance)) {
+            self::$instance = new Csrf();
+        }
 
-        return $token;
+        return self::$instance->getToken();
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
     }
 
     public static function validate(mixed $token): bool
@@ -22,7 +38,7 @@ class Csrf
             throw new \Exception('CSRF token must be a string');
         }
 
-        $sessionToken = Session::get('_csrf_token', '');
+        $sessionToken = Session::get('_old_csrf_token', '');
 
         if (!is_string($sessionToken)) {
             throw new \Exception('CSRF token not found in session');

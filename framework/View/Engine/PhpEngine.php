@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Framework\View\Engine;
 
 use App\App;
+use Framework\Auth\Auth;
+use Framework\Auth\Authenticatable;
 use Framework\Routing\Csrf;
 use Framework\Support\Session;
 use Framework\Support\Str;
@@ -149,9 +151,24 @@ class PhpEngine implements EngineInterface
     protected function csrf(): void
     {
         $token = Csrf::token();
-
+        echo "TOKEN: {$token}";
         echo <<<HTML
         <input type="hidden" name="_csrf_token" value="{$token}">
         HTML;
+    }
+
+    protected function isAuth(): bool
+    {
+        return Auth::check();
+    }
+
+    protected function user(): ?Authenticatable
+    {
+        return Auth::user();
+    }
+
+    protected function isGuest(): bool
+    {
+        return !Auth::check();
     }
 }

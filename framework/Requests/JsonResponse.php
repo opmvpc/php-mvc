@@ -18,6 +18,7 @@ class JsonResponse extends Response
             $statusCode,
             [
                 'Content-Type' => 'application/json',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
             ]
         );
     }

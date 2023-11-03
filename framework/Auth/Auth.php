@@ -9,6 +9,9 @@ use Framework\Support\Str;
 
 class Auth
 {
+    /**
+     * Log user in.
+     */
     public static function login(string $email, string $password): bool
     {
         try {
@@ -42,6 +45,9 @@ class Auth
         return true;
     }
 
+    /**
+     * Register user.
+     */
     public static function register(string $name, string $email, string $password, string $password_confirmation, Context $context): bool
     {
         if ($password !== $password_confirmation) {
@@ -67,11 +73,17 @@ class Auth
         return true;
     }
 
+    /**
+     * Log user out.
+     */
     public static function logout(): void
     {
         Session::delete('_user');
     }
 
+    /**
+     * Get authenticated user.
+     */
     public static function user(): ?Authenticatable
     {
         $user = Session::get('_user');
@@ -80,19 +92,30 @@ class Auth
             return $user;
         }
 
-        throw new \Exception('No authenticated user');
+        return null;
     }
 
+    /**
+     * Check if user is authenticated.
+     */
     public static function check(): bool
     {
-        return null !== self::user();
+        $user = self::user();
+
+        return null !== $user;
     }
 
+    /**
+     * Check if user is guest.
+     */
     public static function guest(): bool
     {
         return !self::check();
     }
 
+    /**
+     * Get authenticated user id.
+     */
     public static function id(): ?int
     {
         $user = self::user();

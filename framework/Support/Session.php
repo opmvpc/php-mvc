@@ -15,6 +15,11 @@ class Session
 
         self::$id = Str::uuid();
         \session_start();
+
+        if (self::has('_csrf_token')) {
+            self::set('_old_csrf_token', self::get('_csrf_token'));
+            self::delete('_csrf_token');
+        }
     }
 
     public static function stop(): void

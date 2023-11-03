@@ -15,6 +15,7 @@ class Redirect extends Response
             302,
             [
                 'Location' => $uri,
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
             ]
         );
     }

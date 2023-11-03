@@ -15,6 +15,7 @@ class ViewResponse extends Response
             $statusCode,
             [
                 'Content-Type' => 'text/html',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
             ]
         );
     }
