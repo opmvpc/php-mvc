@@ -15,16 +15,16 @@
       "email": "thibsix@outlook.be"
     }
   ],
+  "require": {
+    "vlucas/phpdotenv": "^5.5",
+    "ramsey/uuid": "^4.7",
+    "league/flysystem": "^3.18"
+  },
   "require-dev": {
     "pestphp/pest": "^2.24",
     "phpstan/phpstan": "^1.10",
     "symfony/var-dumper": "^6.3",
     "filp/whoops": "^2.15"
-  },
-  "config": {
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
   },
   "scripts": {
     "test": [
@@ -33,11 +33,17 @@
     ],
     "phpstan": "phpstan analyse -c phpstan.neon --memory-limit 1G",
     "pest": "pest --parallel --display-warnings --display-notices --display-errors --stop-on-failure",
-    "loc": "@php phploc-7.0.2.phar app/ database/ framework/ resources/ routes/ tests/"
+    "loc": "@php phploc-7.0.2.phar app/ database/ framework/ resources/ routes/ config/ tests/"
   },
-  "require": {
-    "vlucas/phpdotenv": "^5.5",
-    "ramsey/uuid": "^4.7"
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   },
-  "license": "MIT"
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
