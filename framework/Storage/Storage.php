@@ -104,9 +104,12 @@ class Storage
 
         return $storage->fileSystem->listContents($path, false)->filter(
             fn ($file) => $file->isFile()
-        )->map(
-            fn ($file) => $storage->createFileObject($file->path())
-        )->toArray();
+        )
+            ->sortByPath()
+            ->map(
+                fn ($file) => $storage->createFileObject($file->path())
+            )->toArray()
+        ;
     }
 
     /**
@@ -120,7 +123,9 @@ class Storage
             fn ($file) => $file->isDir()
         )->map(
             fn ($file) => $file->path()
-        )->toArray();
+        )->sortByPath()
+            ->toArray()
+        ;
     }
 
     /**

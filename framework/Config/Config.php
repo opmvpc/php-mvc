@@ -87,6 +87,7 @@ class Config
             'app' => require $this->basePath.'/config/app.php',
             'database' => require $this->basePath.'/config/database.php',
             'session' => require $this->basePath.'/config/session.php',
+            'storage' => require $this->basePath.'/config/storage.php',
         ];
     }
 }
