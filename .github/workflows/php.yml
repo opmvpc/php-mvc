@@ -17,6 +17,16 @@ jobs:
       matrix:
         operating-system: [ubuntu-latest, windows-latest]
         php-version: ["8.1", "8.2"]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: microvel_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     name: PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
 
     steps:
@@ -52,5 +62,19 @@ jobs:
       - name: Copy .env
         run: cp .env.ci .env
 
+      # Add a step to wait for MySQL to be ready
+      - name: Wait for MySQL
+        run: |
+          until nc -z ${{ job.services.mysql.ports[3306] }}; do
+            echo 'Waiting for MySQL...'
+            sleep 1
+          done
+        shell: bash
+
       - name: Run test suite
         run: composer run-script test
+
+      # Add a step for creating the application database
+      - name: Set up application database
+        run: |
+          mysql -uroot -ppassword -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS microvel_test;'
