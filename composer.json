@@ -18,7 +18,7 @@
   "require": {
     "vlucas/phpdotenv": "^5.5",
     "ramsey/uuid": "^4.7",
-    "league/flysystem": "^3.18"
+    "league/flysystem": "^3.10"
   },
   "require-dev": {
     "pestphp/pest": "^2.24",
