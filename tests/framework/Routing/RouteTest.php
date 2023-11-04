@@ -8,6 +8,7 @@ describe('Route generation', function () {
     });
 
     afterEach(function () {
+        $this->router->__destruct();
         unset($this->router);
     });
 

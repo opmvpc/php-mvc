@@ -10,12 +10,14 @@ require __DIR__.'/vendor/autoload.php';
 use App\App;
 use Database\MigrationsManager;
 use Database\SeedersManager;
+use Framework\Storage\Storage;
 
 /*
  * Available commands:
  *   - php partisan migrate
  *   - php partisan migrate:fresh
  *   - php partisan migrate:fresh --seed
+ *   - php partisan storage:link
  */
 
 $app = App::get();
@@ -43,6 +45,11 @@ if ('migrate' === $command) {
     echo 'Seeding...'.PHP_EOL;
     $seedersManager = new SeedersManager();
     $seedersManager->seed();
+    echo 'Done'.PHP_EOL;
+} elseif ('storage:link' === $command) {
+    echo 'Linking storage...'.PHP_EOL;
+    Storage::init($app->basePath().$app->config('storage.app'));
+    Storage::link();
     echo 'Done'.PHP_EOL;
 } else {
     echo PHP_EOL.'Error: Command not found'.PHP_EOL;

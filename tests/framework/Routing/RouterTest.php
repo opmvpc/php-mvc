@@ -5,20 +5,22 @@ use Framework\Requests\ResponseInterface;
 use Framework\Routing\HttpVerb;
 use Framework\Routing\Router;
 
-beforeEach(function () {
-    $this->router = Router::getInstance();
-});
-
-afterEach(function () {
-    $this->router->__destruct();
-    unset($this->router);
-});
-
 describe('Router Tests', function () {
+    beforeEach(function () {
+        $this->router = Router::getInstance();
+    });
+
+    afterEach(function () {
+        $this->router->__destruct();
+        unset($this->router);
+    });
+
     it('should register routes from route file', function () {
+        $this->router->__destruct();
+        unset($this->router);
+        $this->router = Router::getInstance();
         $registerRoutes = require __DIR__.'/fixtures/simple_routes.php';
         $registerRoutes($this->router);
-
         expect($this->router->routes())->toBeArray();
         expect($this->router->routes())->toHaveLength(5);
 
@@ -45,6 +47,10 @@ describe('Router Tests', function () {
 
     it('should register a POST route', function (string $uri, Closure $action) {
         $this->router->post($uri, $action);
+
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(1);
+
         expect($this->router->routes()[0]->method())->toBe(HttpVerb::POST);
         expect($this->router->routes()[0]->action())->toBeInstanceOf(Closure::class);
     })->with([
@@ -98,6 +104,9 @@ describe('Router Tests', function () {
         foreach ($routes as $route) {
             $this->router->add($route['uri'], $route['method'], $route['action']);
         }
+
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(2);
 
         $response = $this->router->dispatch();
         expect($response->getBody())->toContain('coucou');
@@ -254,6 +263,9 @@ describe('Router Tests', function () {
             $this->router->add($route['uri'], $route['method'], $route['action']);
         }
 
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(2);
+
         $response = $this->router->match(HttpVerb::GET, '/articles');
         expect($response->path())->toBe('/articles');
         expect($response->params())->toBe([]);
@@ -274,6 +286,9 @@ describe('Router Tests', function () {
         foreach ($routes as $route) {
             $this->router->add($route['uri'], $route['method'], $route['action']);
         }
+
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(2);
 
         $response = $this->router->match(HttpVerb::GET, '/articles/1');
         expect($response->path())->toBe('/articles/{id}');
