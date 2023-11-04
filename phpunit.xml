@@ -13,7 +13,6 @@
         <include>
             <directory suffix=".php">./app</directory>
             <directory suffix=".php">./framework</directory>
-            <directory suffix=".php">./src</directory>
         </include>
     </source>
 </phpunit>

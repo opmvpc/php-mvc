@@ -6,6 +6,7 @@ namespace Framework\Storage;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\StorageAttributes;
 
 class Storage
 {
@@ -103,11 +104,11 @@ class Storage
         $storage = self::getInstance();
 
         return $storage->fileSystem->listContents($path, false)->filter(
-            fn ($file) => $file->isFile()
+            fn (StorageAttributes $file) => $file->isFile()
         )
             ->sortByPath()
             ->map(
-                fn ($file) => $storage->createFileObject($file->path())
+                fn (StorageAttributes $file) => $storage->createFileObject($file->path())
             )->toArray()
         ;
     }
@@ -120,11 +121,11 @@ class Storage
         $storage = self::getInstance();
 
         return $storage->fileSystem->listContents($path, true)->filter(
-            fn ($file) => $file->isDir()
+            fn (StorageAttributes $file) => $file->isDir()
         )->sortByPath()
             ->map(
-                fn ($file) => $file->path()
-                )
+                fn (StorageAttributes $file) => $file->path()
+            )
             ->toArray()
         ;
     }

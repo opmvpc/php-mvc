@@ -77,14 +77,14 @@ class Session
             $flash = [];
         }
 
-        $oldFlash = \array_filter($flash, fn ($key) => $key !== self::$id, ARRAY_FILTER_USE_KEY);
+        $oldFlash = \array_filter($flash, fn (string $key) => $key !== self::$id, ARRAY_FILTER_USE_KEY);
         foreach ($oldFlash as $sessions) {
             foreach (\array_keys($sessions) as $sessionKey) {
                 self::delete(\strval($sessionKey));
             }
         }
 
-        $flash = \array_filter($flash, fn ($key) => $key === self::$id, ARRAY_FILTER_USE_KEY);
+        $flash = \array_filter($flash, fn (string $key) => $key === self::$id, ARRAY_FILTER_USE_KEY);
         static::set('_flash', $flash);
     }
 

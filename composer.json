@@ -22,10 +22,11 @@
     "league/flysystem": "^3.10"
   },
   "require-dev": {
+    "filp/whoops": "^2.15",
     "pestphp/pest": "^2.24",
+    "pestphp/pest-plugin-type-coverage": "^2.4",
     "phpstan/phpstan": "^1.10",
-    "symfony/var-dumper": "^6.3",
-    "filp/whoops": "^2.15"
+    "symfony/var-dumper": "^6.3"
   },
   "scripts": {
     "test": [
@@ -34,10 +35,13 @@
     ],
     "test-ci": [
       "@phpstan",
-      "@pest --coverage"
+      "@type",
+      "@pestp --coverage"
     ],
     "phpstan": "phpstan analyse -c phpstan.neon --memory-limit 1G",
-    "pest": "pest --parallel --display-warnings --display-notices --display-errors --stop-on-failure",
+    "pest": "pest --display-warnings --display-notices --display-errors --stop-on-failure ",
+    "pestp": "@pest --parallel",
+    "type": "pest --type-coverage",
     "loc": "@php phploc-7.0.2.phar app/ database/ framework/ resources/ routes/ config/ tests/"
   },
   "config": {

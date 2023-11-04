@@ -210,7 +210,7 @@ class Route
          * - {id} => ([^/]+)
          * - {id?} => ([^/]*).
          */
-        $pattern = \preg_replace_callback('/\{([^}]+)\}\//', function ($matches) use (&$paramNames, &$requiredParams) {
+        $pattern = \preg_replace_callback('/\{([^}]+)\}\//', function (array $matches) use (&$paramNames, &$requiredParams) {
             $paramNames[] = \rtrim($matches[1], '?');
 
             if (str_ends_with($matches[1], '?')) {
@@ -240,7 +240,7 @@ class Route
         // on récupère les valeurs des paramètres
         if (count($matches[1]) > 0) {
             $paramValues = \array_slice($matches, 1);
-            $paramValues = \array_map(function ($value) {
+            $paramValues = \array_map(function (array $value) {
                 if (count($value) > 0) {
                     return $value[0];
                 }
@@ -248,7 +248,7 @@ class Route
                 return null;
             }, $paramValues);
             // replace empty string by null
-            $paramValues = \array_map(fn ($value) => '' === $value ? null : $value, $paramValues);
+            $paramValues = \array_map(fn (string $value) => '' === $value ? null : $value, $paramValues);
         }
         if (count($paramValues) > 0) {
             // on ajoute les paramètres à la route

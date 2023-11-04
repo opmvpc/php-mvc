@@ -30,7 +30,7 @@ abstract class AbstractMiddlewaresManager
     /**
      * @param array<string> $middlewares
      */
-    public function handle(Context $context, $middlewares): Context|MessageInterface
+    public function handle(Context $context, array $middlewares): Context|MessageInterface
     {
         $this->register();
 
