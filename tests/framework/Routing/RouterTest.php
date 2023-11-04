@@ -2,6 +2,7 @@
 
 use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Requests\ResponseInterface;
+use Framework\Requests\ViewResponse;
 use Framework\Routing\HttpVerb;
 use Framework\Routing\Router;
 
@@ -305,4 +306,13 @@ describe('Router Tests', function () {
             ],
         ],
     ]);
+
+    it('should dispatch a view response', function () {
+        $this->router->get('/', fn () => view('basic'));
+        $response = $this->router->dispatch();
+        expect($response)->toBeInstanceOf(ResponseInterface::class);
+        expect($response)->toBeInstanceOf(ViewResponse::class);
+        expect($response->getBody())->toContain('<h1>Hello</h1>');
+        expect($response->getStatusCode())->toBe(200);
+    });
 });

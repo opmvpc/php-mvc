@@ -6,7 +6,7 @@ namespace Framework\Support;
 
 class Session
 {
-    private static string $id;
+    private static string $id = '';
 
     public static function start(int $lifetime = 180): void
     {
