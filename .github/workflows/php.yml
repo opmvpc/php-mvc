@@ -38,7 +38,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, xml
           ini-values: post_max_size=256M, memory_limit=2G
-          coverage: none
+          coverage: xdebug
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -84,4 +84,4 @@ jobs:
           mysql -uroot -ppassword -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS microvel_test;'
 
       - name: Run test suite
-        run: composer run-script test
+        run: composer run-script test-ci
