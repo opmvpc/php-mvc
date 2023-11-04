@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Framework\Middleware\AbstractMiddlewaresManager;
+use Framework\Middleware\Authenticated;
+use Framework\Middleware\CsrfValidation;
 
 class MiddlewaresManager extends AbstractMiddlewaresManager
 {

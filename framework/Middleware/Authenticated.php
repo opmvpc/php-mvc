@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Middleware;
+declare(strict_types=1);
+
+namespace Framework\Middleware;
 
 use Framework\Auth\Auth;
-use Framework\Middleware\AbstractMiddleware;
 use Framework\Requests\MessageInterface;
 use Framework\Routing\Context;
 use Framework\Routing\Router;
