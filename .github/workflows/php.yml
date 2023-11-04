@@ -65,7 +65,7 @@ jobs:
       # Add a step to wait for MySQL to be ready
       - name: Wait for MySQL
         run: |
-          until nc -z ${{ job.services.mysql.ports[3306] }}; do
+          until nc -z 127.0.0.1 3306; do
             echo 'Waiting for MySQL...'
             sleep 1
           done
