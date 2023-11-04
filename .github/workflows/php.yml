@@ -78,10 +78,10 @@ jobs:
           echo "MySQL is up and running."
         shell: bash
 
-      - name: Run test suite
-        run: composer run-script test
-
       # Add a step for creating the application database
       - name: Set up application database
         run: |
           mysql -uroot -ppassword -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS microvel_test;'
+
+      - name: Run test suite
+        run: composer run-script test
