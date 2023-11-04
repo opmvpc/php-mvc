@@ -48,10 +48,10 @@ class Response extends Message implements ResponseInterface
             ->withHeader('Content-Type', 'text/html')
         ;
 
-        if ('development' === App::get()->config('app.env')) {
-            $response = $response->withBody($e->render());
-        } else {
+        if ('production' == App::get()->config('app.env')) {
             $response = $response->withBody('<h1>Internal Server Error</h1>');
+        } else {
+            $response = $response->withBody($e->render());
         }
 
         //  Ignoring this PHPStan error

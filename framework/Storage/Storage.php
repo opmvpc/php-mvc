@@ -124,7 +124,7 @@ class Storage
         )->sortByPath()
             ->map(
                 fn ($file) => $file->path()
-            )
+                )
             ->toArray()
         ;
     }
