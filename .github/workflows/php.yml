@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest, windows-latest]
+        operating-system: [ubuntu-latest]
         php-version: ["8.1", "8.2"]
     services:
       mysql:
@@ -65,10 +65,17 @@ jobs:
       # Add a step to wait for MySQL to be ready
       - name: Wait for MySQL
         run: |
-          until nc -z 127.0.0.1 3306; do
-            echo 'Waiting for MySQL...'
+          timeout=20 # Set a 20-second timeout
+          while ! nc -z 127.0.0.1 3306; do
+            echo "Waiting for MySQL..."
             sleep 1
+            timeout=$((timeout-1))
+            if [ "$timeout" -le 0 ]; then
+              echo "Timed out waiting for MySQL to start."
+              exit 1
+            fi
           done
+          echo "MySQL is up and running."
         shell: bash
 
       - name: Run test suite
