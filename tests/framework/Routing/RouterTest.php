@@ -353,4 +353,36 @@ describe('Router Tests', function () {
         expect($response->getHeaders())->toBeArray();
         expect($response->getHeaders()['Content-Type'])->toBe('application/json');
     });
+
+    it('should return the right response when multiple routes are registered with close names', function (array $routes) {
+        foreach ($routes as $route) {
+            $this->router->add($route['uri'], $route['method'], $route['action']);
+        }
+
+        expect($this->router->routes())->toBeArray();
+        expect($this->router->routes())->toHaveLength(3);
+
+        $response = $this->router->dispatch();
+
+        expect($response->getBody())->toContain('coucou');
+        expect($response->getStatusCode())->toBe(200);
+
+        $response = $this->router->dispatch('/articles/1');
+
+        expect($response->getBody())->toContain('show');
+        expect($response->getStatusCode())->toBe(200);
+
+        $response = $this->router->dispatch('/admin/articles/1');
+
+        expect($response->getBody())->toContain('admin');
+        expect($response->getStatusCode())->toBe(200);
+    })->with([
+        'routes' => [
+            [
+                ['uri' => '/', 'method' => HttpVerb::GET, 'action' => fn () => 'coucou'],
+                ['uri' => '/articles/{articleId}', 'method' => HttpVerb::GET, 'action' => fn () => 'show'],
+                ['uri' => '/admin/articles/{articleId}', 'method' => HttpVerb::GET, 'action' => fn () => 'admin'],
+            ],
+        ],
+    ]);
 });

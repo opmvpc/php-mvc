@@ -196,9 +196,6 @@ class Route
         if ($this->path === $path && $this->method === $method) {
             return true;
         }
-        if ($this->path === $path && $this->method !== $method) {
-            throw new MethodNotAllowedException();
-        }
 
         $paramNames = [];
         $requiredParams = [];

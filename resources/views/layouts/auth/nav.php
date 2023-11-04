@@ -3,6 +3,7 @@
         <a class="text-2xl font-semibold" href="<?php echo $this->route('home'); ?>">PHP MVC FRAMEWORK</a>
         <ul class="flex space-x-4 text-xl">
             <li><a href="<?php echo $this->route('admin.dashboard'); ?>">Dashboard</a></li>
+            <li><a href="<?php echo $this->route('admin.articles.index'); ?>">Articles</a></li>
         </ul>
     </div>
 

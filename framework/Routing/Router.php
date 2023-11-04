@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Framework\Routing;
 
+use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\NotFoundException;
 use Framework\Requests\MessageInterface;
 use Framework\Requests\Redirect;
@@ -106,6 +107,10 @@ class Router
 
             // if an error occurs, show it to the user
             return $matching->run($request);
+        }
+
+        if (in_array($request->getMethod(), HttpVerb::cases())) {
+            throw new MethodNotAllowedException("Method {$request->getMethod()->value} not allowed for {$request->getUri()}");
         }
 
         // no matching route has been found
