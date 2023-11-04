@@ -14,7 +14,7 @@ class Boolean implements RuleInterface
     public function validate(array $data, string $field): bool
     {
         if (isset($data[$field])) {
-            return false !== filter_var($data[$field], FILTER_VALIDATE_BOOLEAN);
+            return false !== \filter_var($data[$field], FILTER_VALIDATE_BOOLEAN);
         }
 
         return false;
@@ -29,6 +29,6 @@ class Boolean implements RuleInterface
 
         $translatedField = Str::translate("fields.{$field}");
 
-        return str_replace(':field', $translatedField, $template);
+        return \str_replace(':field', $translatedField, $template);
     }
 }
