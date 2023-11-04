@@ -41,7 +41,7 @@
     "phpstan": "phpstan analyse -c phpstan.neon --memory-limit 1G",
     "pest": "pest --display-warnings --display-notices --display-errors --stop-on-failure ",
     "pestp": "@pest --parallel",
-    "type": "pest --type-coverage",
+    "type": "pest --type-coverage --min=100",
     "loc": "@php phploc-7.0.2.phar app/ database/ framework/ resources/ routes/ config/ tests/"
   },
   "config": {
