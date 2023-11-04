@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Framework\Routing;
 
 use App\Http\Middleware\MiddlewaresManager;
-use Framework\Exceptions\MethodNotAllowedException;
 use Framework\Exceptions\ServerError;
 use Framework\Exceptions\ValidationException;
 use Framework\Requests\JsonResponse;
@@ -192,9 +191,14 @@ class Route
 
     public function matches(HttpVerb $method, string $path): bool
     {
-        // literal match
-        if ($this->path === $path && $this->method === $method) {
-            return true;
+        if ($this->path === $path) {
+            if ($this->method === $method) {
+                // Chemin et méthode correspondent parfaitement
+                return true;
+            }
+
+            // Chemin correspond mais pas la méthode
+            return false;
         }
 
         $paramNames = [];
@@ -219,18 +223,19 @@ class Route
             return '([^/]+)/';
         }, $pattern);
 
+        // Ajouter des ancres de début et de fin pour s'assurer que la regex correspond à tout le chemin
+        $pattern = "^{$pattern}$"; // Modifiez cette ligne
+
         // si la route ne contient pas de paramètres, on ne fait pas de regex
         if (null !== $pattern && !str_contains($pattern, '+') && !str_contains($pattern, '*')) {
             return false;
         }
 
-        // on ajoute les délimiteurs de regex
         \preg_match_all("#{$pattern}#", $this->normalizePath($path), $matches);
 
         // si la regex à matché, on check si la méthode est la bonne
-        // dd($matches, $this->method, $method, $path, $this->path);
         if (count($matches[0]) > 0 && $this->method !== $method) {
-            throw new MethodNotAllowedException();
+            return false;
         }
 
         $paramValues = [];

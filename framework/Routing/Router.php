@@ -100,20 +100,22 @@ class Router
     {
         $request = Request::fromGlobals($uri, $method);
 
-        $matching = $this->match($request->getMethod(), $request->getUri());
+        $matchResult = $this->match($request->getMethod(), $request->getUri());
 
-        if ($matching) {
-            $this->current = $matching;
+        if ($matchResult['route']) {
+            $this->current = $matchResult['route'];
 
-            // if an error occurs, show it to the user
-            return $matching->run($request);
+            return $matchResult['route']->run($request);
         }
 
-        if (in_array($request->getMethod(), HttpVerb::cases())) {
-            throw new MethodNotAllowedException("Method {$request->getMethod()->value} not allowed for {$request->getUri()}");
+        if (!empty($matchResult['allowedMethods'])) {
+            $allowedMethods = array_map(fn (HttpVerb $method) => $method->value, $matchResult['allowedMethods']);
+
+            throw new MethodNotAllowedException(
+                "Method {$request->getMethod()->value} is not allowed for the URI {$request->getUri()}. Allowed methods: ".implode(', ', $allowedMethods)
+            );
         }
 
-        // no matching route has been found
         return $this->dispatchNotFound();
     }
 
@@ -184,16 +186,22 @@ class Router
 
     /**
      * Match an URL from registered routes.
+     *
+     * @return array{route: null|Route, allowedMethods: array<array-key, HttpVerb>}
      */
-    public function match(HttpVerb $requestMethod, string $requestPath): ?Route
+    public function match(HttpVerb $requestMethod, string $requestPath): array
     {
+        $allowedMethods = [];
         foreach ($this->routes as $route) {
             if ($route->matches($requestMethod, $requestPath)) {
-                return $route;
+                return ['route' => $route, 'allowedMethods' => []];
+            }
+            if ($route->path() === $requestPath) {
+                $allowedMethods[] = $route->method();
             }
         }
 
-        return null;
+        return ['route' => null, 'allowedMethods' => $allowedMethods];
     }
 
     /**
