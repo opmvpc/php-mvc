@@ -8,5 +8,5 @@ $this->extends('layouts/guest/app');
     <h1>Articles</h1>
 </div>
 <?php foreach ($articles as $article) { ?>
-    <?php $this->includes('components/article_card', ['article' => $article]); ?>
+    <?php $this->includes('components/article_card', ['article' => $article, 'link' => $this->route('articles.show', ['articleId' => $article->id()])]); ?>
 <?php } ?>

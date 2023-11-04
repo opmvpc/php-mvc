@@ -66,7 +66,7 @@ class ArticleController extends BaseController
 
         $article->save();
 
-        return Router::redirect('/articles');
+        return Router::redirect('admin.articles.index');
     }
 
     public function destroy(Context $context): Response
@@ -75,6 +75,6 @@ class ArticleController extends BaseController
         $article = Article::findOrFail($id);
         $article->delete();
 
-        return Router::redirect('/articles');
+        return Router::redirect('admin.articles.index');
     }
 }

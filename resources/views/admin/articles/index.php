@@ -1,7 +1,7 @@
 <?php
 use Framework\Support\Str;
 
-$this->extends('layouts/guest/app');
+$this->extends('layouts/auth/app');
 
 ?>
 
@@ -12,5 +12,5 @@ $this->extends('layouts/guest/app');
     </div>
 </div>
 <?php foreach ($articles as $article) { ?>
-    <?php $this->includes('components/article_card', ['article' => $article]); ?>
+    <?php $this->includes('components/article_card', ['article' => $article, 'link' => $this->route('admin.articles.show', ['articleId' => $article->id()])]); ?>
 <?php } ?>

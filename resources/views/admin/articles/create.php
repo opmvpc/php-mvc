@@ -1,4 +1,4 @@
-<?php $this->extends('layouts/guest/app'); ?>
+<?php $this->extends('layouts/auth/app'); ?>
 
 <h1>
     Créer un article
