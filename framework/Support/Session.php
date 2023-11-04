@@ -87,4 +87,9 @@ class Session
         $flash = \array_filter($flash, fn ($key) => $key === self::$id, ARRAY_FILTER_USE_KEY);
         static::set('_flash', $flash);
     }
+
+    public static function id(): string
+    {
+        return self::$id;
+    }
 }
