@@ -1,6 +1,7 @@
 <?php
 
 use Framework\Exceptions\MethodNotAllowedException;
+use Framework\Requests\JsonResponse;
 use Framework\Requests\ResponseInterface;
 use Framework\Requests\ViewResponse;
 use Framework\Routing\HttpVerb;
@@ -314,5 +315,42 @@ describe('Router Tests', function () {
         expect($response)->toBeInstanceOf(ViewResponse::class);
         expect($response->getBody())->toContain('<h1>Hello</h1>');
         expect($response->getStatusCode())->toBe(200);
+    });
+
+    it('should dispatch a redirect response', function () {
+        $this->router->get('/', fn () => Router::redirect('/test'));
+        $this->router->get('/test', fn () => 'test');
+        $response = $this->router->dispatch();
+        expect($response)->toBeInstanceOf(ResponseInterface::class);
+        expect($response->getStatusCode())->toBe(302);
+        expect($response->getHeaders())->toBeArray();
+        expect($response->getHeaders()['Location'])->toBe('/test');
+    });
+
+    it('should dispatch a redirect response with a route name', function () {
+        $this->router->get('/', fn () => Router::redirect('test.test'));
+        $this->router->get('/test', fn () => 'test')->withName('test.test');
+        $response = $this->router->dispatch();
+        expect($response)->toBeInstanceOf(ResponseInterface::class);
+        expect($response->getStatusCode())->toBe(302);
+        expect($response->getHeaders())->toBeArray();
+        expect($response->getHeaders()['Location'])->toBe('/test');
+    });
+
+    it('should dispatch a Json response', function () {
+        $this->router->get('/', fn () => ['test' => 'test']);
+        $response = $this->router->dispatch();
+        expect($response)->toBeInstanceOf(ResponseInterface::class);
+        expect($response)->toBeInstanceOf(JsonResponse::class);
+        expect($response->getBody())->toBeJson(
+            <<<'JSON'
+            {
+                "test": "test"
+            }
+            JSON
+        );
+        expect($response->getStatusCode())->toBe(200);
+        expect($response->getHeaders())->toBeArray();
+        expect($response->getHeaders()['Content-Type'])->toBe('application/json');
     });
 });
