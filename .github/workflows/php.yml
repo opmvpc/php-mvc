@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-version: ["8.1", "8.2"]
+        php-version: ["8.1", "8.2", "8.3"]
     services:
       mysql:
         image: mysql:latest
