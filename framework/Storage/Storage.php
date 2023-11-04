@@ -121,9 +121,10 @@ class Storage
 
         return $storage->fileSystem->listContents($path, true)->filter(
             fn ($file) => $file->isDir()
-        )->map(
-            fn ($file) => $file->path()
         )->sortByPath()
+            ->map(
+                fn ($file) => $file->path()
+            )
             ->toArray()
         ;
     }
