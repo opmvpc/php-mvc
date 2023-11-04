@@ -47,7 +47,6 @@ describe('Storage tests', function () {
 
     it('should list directory contents', function () {
         $dirs = Storage::directories();
-        dump($dirs);
         expect($dirs)->toBeArray();
         expect($dirs[0])->toBe('1');
         expect($dirs[1])->toBe('1/1-1');
